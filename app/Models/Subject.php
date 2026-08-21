@@ -37,4 +37,9 @@ class Subject extends Model
     {
         return $this->hasMany(Grade::class, 'subject_id');
     }
+
+    public function questionBanks(): HasMany
+    {
+        return $this->hasMany(QuestionBank::class, 'subject_id');
+    }
 }
