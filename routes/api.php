@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\ClassController;
+use App\Http\Controllers\Api\ClassSubjectController;
 use App\Http\Controllers\Api\TeacherController;
 use App\Http\Controllers\Api\StudentController;
 use App\Http\Controllers\Api\SubjectController;
@@ -16,6 +17,17 @@ Route::middleware('auth:sanctum')->group(function () {
     // Classes API
     Route::apiResource('classes', ClassController::class);
 
+    // Class Subjects API
+    Route::get('/class-subjects', [ClassSubjectController::class, 'index']);
+    Route::get('/class-subjects/{class_subject}', [ClassSubjectController::class, 'show']);
+
+    Route::middleware('role:Admin,Administrator')->group(function () {
+        Route::post('/class-subjects', [ClassSubjectController::class, 'store']);
+        Route::put('/class-subjects/{class_subject}', [ClassSubjectController::class, 'update']);
+        Route::patch('/class-subjects/{class_subject}', [ClassSubjectController::class, 'update']);
+        Route::delete('/class-subjects/{class_subject}', [ClassSubjectController::class, 'destroy']);
+    });
+
     // Teachers API
     Route::get('/teachers', [TeacherController::class, 'index']);
     Route::get('/teachers/export', [TeacherController::class, 'export']);
@@ -28,4 +40,4 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::patch('/teachers/{teacher}', [TeacherController::class, 'update']);
         Route::delete('/teachers/{teacher}', [TeacherController::class, 'destroy']);
     });
-     });
+});

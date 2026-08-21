@@ -14,6 +14,11 @@ class ClassSubjectResource extends JsonResource
             'class_id' => $this->class_id,
             'subject_id' => $this->subject_id,
             'teacher_id' => $this->teacher_id,
+            'created_at' => $this->created_at?->toISOString(),
+            'updated_at' => $this->updated_at?->toISOString(),
+            'class' => new SchoolClassResource($this->whenLoaded('schoolClass')),
+            'subject' => new SubjectResource($this->whenLoaded('subject')),
+            'teacher' => new TeacherResource($this->whenLoaded('teacher')),
         ];
     }
 }
