@@ -3,8 +3,10 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Api\StoreClassRequest;
+use App\Http\Requests\Api\UpdateClassRequest;
+use App\Http\Resources\SchoolClassResource;
 use App\Models\SchoolClass;
-use Illuminate\Http\Request;
 
 class ClassController extends Controller
 {
@@ -13,12 +15,31 @@ class ClassController extends Controller
      */
     public function index()
     {
-        $classes = SchoolClass::latest()->get();
+        $classes = SchoolClass::with('teacher')
+            ->latest()
+            ->get();
 
         return response()->json([
-            'message' => 'Data kelas berhasil diambil.',
-            'data' => $classes,
+            'success' => true,
+            'message' => 'Classes retrieved successfully',
+            'data' => SchoolClassResource::collection($classes),
         ]);
+    }
+
+    /**
+     * Menambahkan kelas.
+     */
+    public function store(StoreClassRequest $request)
+    {
+        $class = SchoolClass::create($request->validated());
+
+        $class->load('teacher');
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Class created successfully',
+            'data' => new SchoolClassResource($class),
+        ], 201);
     }
 
     /**
@@ -26,65 +47,47 @@ class ClassController extends Controller
      */
     public function show($id)
     {
-        $class = SchoolClass::find($id);
+        $class = SchoolClass::with('teacher')
+            ->find($id);
 
         if (!$class) {
             return response()->json([
-                'message' => 'Data kelas tidak ditemukan.',
+                'success' => false,
+                'message' => 'Class not found',
+                'data' => null,
             ], 404);
         }
 
         return response()->json([
-            'message' => 'Detail kelas berhasil diambil.',
-            'data' => $class,
+            'success' => true,
+            'message' => 'Class retrieved successfully',
+            'data' => new SchoolClassResource($class),
         ]);
-    }
-
-    /**
-     * Menambahkan kelas.
-     */
-    public function store(Request $request)
-    {
-        $validated = $request->validate([
-            'name' => ['required', 'string', 'max:255'],
-            'teacher_id' => ['nullable', 'integer'],
-            'level' => ['required', 'string', 'max:100'],
-            'academic_year' => ['required', 'string', 'max:20'],
-        ]);
-
-        $class = SchoolClass::create($validated);
-
-        return response()->json([
-            'message' => 'Kelas berhasil ditambahkan.',
-            'data' => $class,
-        ], 201);
     }
 
     /**
      * Mengubah data kelas.
      */
-    public function update(Request $request, $id)
+    public function update(UpdateClassRequest $request, $id)
     {
         $class = SchoolClass::find($id);
 
         if (!$class) {
             return response()->json([
-                'message' => 'Data kelas tidak ditemukan.',
+                'success' => false,
+                'message' => 'Class not found',
+                'data' => null,
             ], 404);
         }
 
-        $validated = $request->validate([
-            'name' => ['required', 'string', 'max:255'],
-            'teacher_id' => ['nullable', 'integer'],
-            'level' => ['required', 'string', 'max:100'],
-            'academic_year' => ['required', 'string', 'max:20'],
-        ]);
+        $class->update($request->validated());
 
-        $class->update($validated);
+        $class->load('teacher');
 
         return response()->json([
-            'message' => 'Kelas berhasil diperbarui.',
-            'data' => $class,
+            'success' => true,
+            'message' => 'Class updated successfully',
+            'data' => new SchoolClassResource($class),
         ]);
     }
 
@@ -97,14 +100,18 @@ class ClassController extends Controller
 
         if (!$class) {
             return response()->json([
-                'message' => 'Data kelas tidak ditemukan.',
+                'success' => false,
+                'message' => 'Class not found',
+                'data' => null,
             ], 404);
         }
 
         $class->delete();
 
         return response()->json([
-            'message' => 'Kelas berhasil dihapus.',
+            'success' => true,
+            'message' => 'Class deleted successfully',
+            'data' => null,
         ]);
     }
 }
