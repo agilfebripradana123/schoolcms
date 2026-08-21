@@ -10,6 +10,7 @@ use App\Http\Controllers\Api\QuestionController;
 use App\Http\Controllers\Api\RoomController;
 use App\Http\Controllers\Api\TeacherController;
 use App\Http\Controllers\Api\StudentController;
+use App\Http\Controllers\Api\AnnouncementController;
 use App\Http\Controllers\Api\SubjectController;
 
 Route::post('/login', [AuthController::class, 'login']);
@@ -106,6 +107,19 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::put('/grades/{grade}', [GradeController::class, 'update']);
         Route::patch('/grades/{grade}', [GradeController::class, 'update']);
         Route::delete('/grades/{grade}', [GradeController::class, 'destroy']);
+    });
+
+        // =========================
+    // ANNOUNCEMENTS
+    // =========================
+    Route::get('/announcements', [AnnouncementController::class, 'index']);
+    Route::get('/announcements/{announcement}', [AnnouncementController::class, 'show']);
+
+    Route::middleware('role:Admin,Administrator')->group(function () {
+        Route::post('/announcements', [AnnouncementController::class, 'store']);
+        Route::put('/announcements/{announcement}', [AnnouncementController::class, 'update']);
+        Route::patch('/announcements/{announcement}', [AnnouncementController::class, 'update']);
+        Route::delete('/announcements/{announcement}', [AnnouncementController::class, 'destroy']);
     });
 
     // Rooms API
