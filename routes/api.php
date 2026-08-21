@@ -11,6 +11,7 @@ use App\Http\Controllers\Api\RoomController;
 use App\Http\Controllers\Api\TeacherController;
 use App\Http\Controllers\Api\StudentController;
 use App\Http\Controllers\Api\AnnouncementController;
+use App\Http\Controllers\Api\AttendanceController;
 use App\Http\Controllers\Api\SubjectController;
 
 Route::post('/login', [AuthController::class, 'login']);
@@ -93,6 +94,19 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::put('/class-subjects/{class_subject}', [ClassSubjectController::class, 'update']);
         Route::patch('/class-subjects/{class_subject}', [ClassSubjectController::class, 'update']);
         Route::delete('/class-subjects/{class_subject}', [ClassSubjectController::class, 'destroy']);
+    });
+
+        // =========================
+    // ATTENDANCE
+    // =========================
+    Route::get('/attendances', [AttendanceController::class, 'index']);
+    Route::get('/attendances/{attendance}', [AttendanceController::class, 'show']);
+
+    Route::middleware('role:Admin,Administrator')->group(function () {
+        Route::post('/attendances', [AttendanceController::class, 'store']);
+        Route::put('/attendances/{attendance}', [AttendanceController::class, 'update']);
+        Route::patch('/attendances/{attendance}', [AttendanceController::class, 'update']);
+        Route::delete('/attendances/{attendance}', [AttendanceController::class, 'destroy']);
     });
 
 
