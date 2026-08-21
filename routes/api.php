@@ -15,7 +15,15 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/logout', [AuthController::class, 'logout']);
 
     // Classes API
-    Route::apiResource('classes', ClassController::class);
+    Route::get('/classes', [ClassController::class, 'index']);
+    Route::get('/classes/{class}', [ClassController::class, 'show']);
+
+    Route::middleware('role:Admin,Administrator')->group(function () {
+        Route::post('/classes', [ClassController::class, 'store']);
+        Route::put('/classes/{class}', [ClassController::class, 'update']);
+        Route::patch('/classes/{class}', [ClassController::class, 'update']);
+        Route::delete('/classes/{class}', [ClassController::class, 'destroy']);
+    });
 
     // Class Subjects API
     Route::get('/class-subjects', [ClassSubjectController::class, 'index']);
