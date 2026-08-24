@@ -52,10 +52,7 @@ class UpdateExamParticipantRequest extends FormRequest
                 'date',
             ],
             'is_blocked' => [
-<<<<<<< HEAD
                 'sometimes',
-=======
->>>>>>> origin/main
                 'boolean',
             ],
             'blocked_reason' => [
@@ -63,10 +60,7 @@ class UpdateExamParticipantRequest extends FormRequest
                 'string',
             ],
             'login_allowed' => [
-<<<<<<< HEAD
                 'sometimes',
-=======
->>>>>>> origin/main
                 'boolean',
             ],
             'current_session_id' => [

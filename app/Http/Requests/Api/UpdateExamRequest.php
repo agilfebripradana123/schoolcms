@@ -69,10 +69,7 @@ class UpdateExamRequest extends FormRequest
             ],
             'status' => [
                 'sometimes',
-<<<<<<< HEAD
-=======
                 'string',
->>>>>>> origin/main
                 Rule::in(['draft', 'published', 'ongoing', 'completed', 'archived']),
             ],
         ];

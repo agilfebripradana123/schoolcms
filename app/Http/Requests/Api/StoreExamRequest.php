@@ -59,10 +59,7 @@ class StoreExamRequest extends FormRequest
                 'boolean',
             ],
             'status' => [
-<<<<<<< HEAD
-=======
                 'string',
->>>>>>> origin/main
                 Rule::in(['draft', 'published', 'ongoing', 'completed', 'archived']),
             ],
         ];
