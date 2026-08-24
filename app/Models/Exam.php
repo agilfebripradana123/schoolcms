@@ -31,10 +31,6 @@ class Exam extends Model
     {
         return [
             'subject_id' => 'integer',
-<<<<<<< HEAD
-            'description' => 'string',
-=======
->>>>>>> origin/main
             'duration_minutes' => 'integer',
             'total_questions' => 'integer',
             'passing_score' => 'integer',
