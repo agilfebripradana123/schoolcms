@@ -12,6 +12,7 @@ class ExamResultResource extends JsonResource
         return [
             'id' => $this->id,
             'participant_id' => $this->participant_id,
+            'participant' => new ExamParticipantResource($this->whenLoaded('participant')),
             'total_score' => $this->total_score,
             'correct_count' => $this->correct_count,
             'wrong_count' => $this->wrong_count,

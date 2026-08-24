@@ -22,6 +22,7 @@
 # SQLite local database
 /database/database.sqlite
 /database/database.sqlite-journal
+/database/sql/*.sql
 
 # IDE / Editor
 /.vscode

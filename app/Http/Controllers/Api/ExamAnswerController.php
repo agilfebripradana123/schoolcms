@@ -13,7 +13,7 @@ class ExamAnswerController extends Controller
 {
     public function index(\Illuminate\Http\Request $request): JsonResponse
     {
-        $query = ExamAnswer::query()->with('participant');
+        $query = ExamAnswer::query()->with(['participant', 'question', 'selectedOption']);
 
         if ($request->filled('participant_id')) {
             $query->where('participant_id', $request->input('participant_id'));
