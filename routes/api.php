@@ -4,12 +4,14 @@ use Illuminate\Support\Facades\Route;
 
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\ClassController;
+use App\Http\Controllers\Api\ClassSubjectController;
+use App\Http\Controllers\Api\GradeController;
+use App\Http\Controllers\Api\RoomController;
 use App\Http\Controllers\Api\TeacherController;
 use App\Http\Controllers\Api\StudentController;
+use App\Http\Controllers\Api\AnnouncementController;
+use App\Http\Controllers\Api\AttendanceController;
 use App\Http\Controllers\Api\SubjectController;
-use App\Http\Controllers\Api\ClassSubjectController;
-use App\Http\Controllers\Api\RoomController;
-use App\Http\Controllers\Api\GradeController;
 
 Route::post('/login', [AuthController::class, 'login']);
 
@@ -95,20 +97,6 @@ Route::middleware('auth:sanctum')->group(function () {
 
 
     // =========================
-    // ROOMS
-    // =========================
-    Route::get('/rooms', [RoomController::class, 'index']);
-    Route::get('/rooms/{room}', [RoomController::class, 'show']);
-
-    Route::middleware('role:Admin,Administrator')->group(function () {
-        Route::post('/rooms', [RoomController::class, 'store']);
-        Route::put('/rooms/{room}', [RoomController::class, 'update']);
-        Route::patch('/rooms/{room}', [RoomController::class, 'update']);
-        Route::delete('/rooms/{room}', [RoomController::class, 'destroy']);
-    });
-
-
-    // =========================
     // GRADES
     // =========================
     Route::get('/grades', [GradeController::class, 'index']);
@@ -121,4 +109,27 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::delete('/grades/{grade}', [GradeController::class, 'destroy']);
     });
 
+        // =========================
+    // ANNOUNCEMENTS
+    // =========================
+    Route::get('/announcements', [AnnouncementController::class, 'index']);
+    Route::get('/announcements/{announcement}', [AnnouncementController::class, 'show']);
+
+    Route::middleware('role:Admin,Administrator')->group(function () {
+        Route::post('/announcements', [AnnouncementController::class, 'store']);
+        Route::put('/announcements/{announcement}', [AnnouncementController::class, 'update']);
+        Route::patch('/announcements/{announcement}', [AnnouncementController::class, 'update']);
+        Route::delete('/announcements/{announcement}', [AnnouncementController::class, 'destroy']);
+    });
+
+    // Rooms API
+    Route::get('/rooms', [RoomController::class, 'index']);
+    Route::get('/rooms/{room}', [RoomController::class, 'show']);
+
+    Route::middleware('role:Admin,Administrator')->group(function () {
+        Route::post('/rooms', [RoomController::class, 'store']);
+        Route::put('/rooms/{room}', [RoomController::class, 'update']);
+        Route::patch('/rooms/{room}', [RoomController::class, 'update']);
+        Route::delete('/rooms/{room}', [RoomController::class, 'destroy']);
+    });
 });
