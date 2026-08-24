@@ -25,6 +25,15 @@ use App\Http\Controllers\Api\ExamInstructionController;
 use App\Http\Controllers\Api\ExamParticipantController;
 use App\Http\Controllers\Api\ExamResultController;
 use App\Http\Controllers\Api\ExamAnswerController;
+use App\Http\Controllers\Api\AcademicYearController;
+use App\Http\Controllers\Api\SemesterController;
+use App\Http\Controllers\Api\CurriculumController;
+use App\Http\Controllers\Api\ClassStudentController;
+use App\Http\Controllers\Api\TeacherAssignmentController;
+use App\Http\Controllers\Api\ScheduleController;
+use App\Http\Controllers\Api\PeriodController;
+use App\Http\Controllers\Api\AssignmentController;
+use App\Http\Controllers\Api\ReportCardController;
 
 Route::post('/login', [AuthController::class, 'login']);
 
@@ -286,5 +295,131 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::put('/exam-answers/{exam_answer}', [ExamAnswerController::class, 'update']);
         Route::patch('/exam-answers/{exam_answer}', [ExamAnswerController::class, 'update']);
         Route::delete('/exam-answers/{exam_answer}', [ExamAnswerController::class, 'destroy']);
+    });
+
+
+    // =========================
+    // ACADEMIC YEARS
+    // =========================
+    Route::get('/academic-years', [AcademicYearController::class, 'index']);
+    Route::get('/academic-years/{academic_year}', [AcademicYearController::class, 'show']);
+
+    Route::middleware('role:Admin,Administrator')->group(function () {
+        Route::post('/academic-years', [AcademicYearController::class, 'store']);
+        Route::put('/academic-years/{academic_year}', [AcademicYearController::class, 'update']);
+        Route::patch('/academic-years/{academic_year}', [AcademicYearController::class, 'update']);
+        Route::delete('/academic-years/{academic_year}', [AcademicYearController::class, 'destroy']);
+    });
+
+
+    // =========================
+    // SEMESTERS
+    // =========================
+    Route::get('/semesters', [SemesterController::class, 'index']);
+    Route::get('/semesters/{semester}', [SemesterController::class, 'show']);
+
+    Route::middleware('role:Admin,Administrator')->group(function () {
+        Route::post('/semesters', [SemesterController::class, 'store']);
+        Route::put('/semesters/{semester}', [SemesterController::class, 'update']);
+        Route::patch('/semesters/{semester}', [SemesterController::class, 'update']);
+        Route::delete('/semesters/{semester}', [SemesterController::class, 'destroy']);
+    });
+
+
+    // =========================
+    // CURRICULUMS
+    // =========================
+    Route::get('/curriculums', [CurriculumController::class, 'index']);
+    Route::get('/curriculums/{curriculum}', [CurriculumController::class, 'show']);
+
+    Route::middleware('role:Admin,Administrator')->group(function () {
+        Route::post('/curriculums', [CurriculumController::class, 'store']);
+        Route::put('/curriculums/{curriculum}', [CurriculumController::class, 'update']);
+        Route::patch('/curriculums/{curriculum}', [CurriculumController::class, 'update']);
+        Route::delete('/curriculums/{curriculum}', [CurriculumController::class, 'destroy']);
+    });
+
+
+    // =========================
+    // CLASS STUDENTS
+    // =========================
+    Route::get('/class-students', [ClassStudentController::class, 'index']);
+    Route::get('/class-students/{class_student}', [ClassStudentController::class, 'show']);
+
+    Route::middleware('role:Admin,Administrator')->group(function () {
+        Route::post('/class-students', [ClassStudentController::class, 'store']);
+        Route::put('/class-students/{class_student}', [ClassStudentController::class, 'update']);
+        Route::patch('/class-students/{class_student}', [ClassStudentController::class, 'update']);
+        Route::delete('/class-students/{class_student}', [ClassStudentController::class, 'destroy']);
+    });
+
+
+    // =========================
+    // TEACHER ASSIGNMENTS
+    // =========================
+    Route::get('/teacher-assignments', [TeacherAssignmentController::class, 'index']);
+    Route::get('/teacher-assignments/{teacher_assignment}', [TeacherAssignmentController::class, 'show']);
+
+    Route::middleware('role:Admin,Administrator')->group(function () {
+        Route::post('/teacher-assignments', [TeacherAssignmentController::class, 'store']);
+        Route::put('/teacher-assignments/{teacher_assignment}', [TeacherAssignmentController::class, 'update']);
+        Route::patch('/teacher-assignments/{teacher_assignment}', [TeacherAssignmentController::class, 'update']);
+        Route::delete('/teacher-assignments/{teacher_assignment}', [TeacherAssignmentController::class, 'destroy']);
+    });
+
+
+    // =========================
+    // SCHEDULES
+    // =========================
+    Route::get('/schedules', [ScheduleController::class, 'index']);
+    Route::get('/schedules/{schedule}', [ScheduleController::class, 'show']);
+
+    Route::middleware('role:Admin,Administrator')->group(function () {
+        Route::post('/schedules', [ScheduleController::class, 'store']);
+        Route::put('/schedules/{schedule}', [ScheduleController::class, 'update']);
+        Route::patch('/schedules/{schedule}', [ScheduleController::class, 'update']);
+        Route::delete('/schedules/{schedule}', [ScheduleController::class, 'destroy']);
+    });
+
+
+    // =========================
+    // PERIODS
+    // =========================
+    Route::get('/periods', [PeriodController::class, 'index']);
+    Route::get('/periods/{period}', [PeriodController::class, 'show']);
+
+    Route::middleware('role:Admin,Administrator')->group(function () {
+        Route::post('/periods', [PeriodController::class, 'store']);
+        Route::put('/periods/{period}', [PeriodController::class, 'update']);
+        Route::patch('/periods/{period}', [PeriodController::class, 'update']);
+        Route::delete('/periods/{period}', [PeriodController::class, 'destroy']);
+    });
+
+
+    // =========================
+    // ASSIGNMENTS
+    // =========================
+    Route::get('/assignments', [AssignmentController::class, 'index']);
+    Route::get('/assignments/{assignment}', [AssignmentController::class, 'show']);
+
+    Route::middleware('role:Admin,Administrator')->group(function () {
+        Route::post('/assignments', [AssignmentController::class, 'store']);
+        Route::put('/assignments/{assignment}', [AssignmentController::class, 'update']);
+        Route::patch('/assignments/{assignment}', [AssignmentController::class, 'update']);
+        Route::delete('/assignments/{assignment}', [AssignmentController::class, 'destroy']);
+    });
+
+
+    // =========================
+    // REPORT CARDS
+    // =========================
+    Route::get('/report-cards', [ReportCardController::class, 'index']);
+    Route::get('/report-cards/{report_card}', [ReportCardController::class, 'show']);
+
+    Route::middleware('role:Admin,Administrator')->group(function () {
+        Route::post('/report-cards', [ReportCardController::class, 'store']);
+        Route::put('/report-cards/{report_card}', [ReportCardController::class, 'update']);
+        Route::patch('/report-cards/{report_card}', [ReportCardController::class, 'update']);
+        Route::delete('/report-cards/{report_card}', [ReportCardController::class, 'destroy']);
     });
 });
