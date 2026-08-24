@@ -34,6 +34,8 @@ use App\Http\Controllers\Api\ScheduleController;
 use App\Http\Controllers\Api\PeriodController;
 use App\Http\Controllers\Api\AssignmentController;
 use App\Http\Controllers\Api\ReportCardController;
+use App\Http\Controllers\Api\AuditLogController;
+use App\Http\Controllers\Api\SettingController;
 
 Route::post('/login', [AuthController::class, 'login']);
 
@@ -421,5 +423,27 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::put('/report-cards/{report_card}', [ReportCardController::class, 'update']);
         Route::patch('/report-cards/{report_card}', [ReportCardController::class, 'update']);
         Route::delete('/report-cards/{report_card}', [ReportCardController::class, 'destroy']);
+    });
+
+
+    // =========================
+    // AUDIT LOGS (read-only, khusus admin)
+    // =========================
+    Route::middleware('role:Admin,Administrator')->group(function () {
+        Route::get('/audit-logs', [AuditLogController::class, 'index']);
+        Route::get('/audit-logs/{audit_log}', [AuditLogController::class, 'show']);
+    });
+
+
+    // =========================
+    // SETTINGS (khusus admin)
+    // =========================
+    Route::middleware('role:Admin,Administrator')->group(function () {
+        Route::get('/settings', [SettingController::class, 'index']);
+        Route::get('/settings/{setting}', [SettingController::class, 'show']);
+        Route::post('/settings', [SettingController::class, 'store']);
+        Route::put('/settings/{setting}', [SettingController::class, 'update']);
+        Route::patch('/settings/{setting}', [SettingController::class, 'update']);
+        Route::delete('/settings/{setting}', [SettingController::class, 'destroy']);
     });
 });
