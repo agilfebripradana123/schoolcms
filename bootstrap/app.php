@@ -15,7 +15,19 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->alias([
             'role' => \App\Http\Middleware\RoleMiddleware::class,
         ]);
+
+        // API-only app: tanpa redirect ke route 'login' (tidak ada),
+        // biarkan AuthenticationException ditangani renderer 401 JSON di bawah.
+        \Illuminate\Auth\Middleware\Authenticate::redirectUsing(fn () => null);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
-        //
+        $exceptions->render(function (\Illuminate\Auth\AuthenticationException $e, \Illuminate\Http\Request $request) {
+            if ($request->is('api/*')) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Unauthenticated.',
+                    'data' => null,
+                ], 401);
+            }
+        });
     })->create();
