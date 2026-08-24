@@ -12,9 +12,12 @@ use App\Http\Controllers\Api\StudentController;
 use App\Http\Controllers\Api\AnnouncementController;
 use App\Http\Controllers\Api\AttendanceController;
 use App\Http\Controllers\Api\SubjectController;
+
 use App\Http\Controllers\Api\RoleController;
 use App\Http\Controllers\Api\PermissionController;
 use App\Http\Controllers\Api\UserController;
+
+
 use App\Http\Controllers\Api\ExamController;
 use App\Http\Controllers\Api\ExamSessionController;
 use App\Http\Controllers\Api\ExamScheduleController;
@@ -145,6 +148,7 @@ Route::middleware('auth:sanctum')->group(function () {
 
 
     // =========================
+
     // ROLES
     // =========================
     Route::get('/roles', [RoleController::class, 'index']);

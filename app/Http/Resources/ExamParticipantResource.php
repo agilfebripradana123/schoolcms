@@ -17,6 +17,7 @@ class ExamParticipantResource extends JsonResource
             'status' => $this->status,
             'started_at' => $this->started_at?->toISOString(),
             'completed_at' => $this->completed_at?->toISOString(),
+<<<<<<< HEAD
             'is_blocked' => (bool) $this->is_blocked,
             'blocked_reason' => $this->blocked_reason,
             'login_allowed' => (bool) $this->login_allowed,
@@ -27,6 +28,18 @@ class ExamParticipantResource extends JsonResource
             'updated_at' => $this->updated_at?->toISOString(),
             'exam' => new \App\Http\Resources\ExamResource($this->whenLoaded('exam')),
             'student' => new StudentResource($this->whenLoaded('student')),
+=======
+            'is_blocked' => $this->is_blocked,
+            'blocked_reason' => $this->blocked_reason,
+            'login_allowed' => $this->login_allowed,
+            'current_session_id' => $this->current_session_id,
+            'last_activity_at' => $this->last_activity_at?->toISOString(),
+            'ip_address' => $this->ip_address,
+            'exam' => new ExamResource($this->whenLoaded('exam')),
+            'student' => new StudentResource($this->whenLoaded('student')),
+            'created_at' => $this->created_at?->toISOString(),
+            'updated_at' => $this->updated_at?->toISOString(),
+>>>>>>> origin/main
         ];
     }
 }

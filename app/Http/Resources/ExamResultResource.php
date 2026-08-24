@@ -13,9 +13,15 @@ class ExamResultResource extends JsonResource
             'id' => $this->id,
             'participant_id' => $this->participant_id,
             'total_score' => $this->total_score,
+<<<<<<< HEAD
             'correct_count' => (int) $this->correct_count,
             'wrong_count' => (int) $this->wrong_count,
             'unanswered_count' => (int) $this->unanswered_count,
+=======
+            'correct_count' => $this->correct_count,
+            'wrong_count' => $this->wrong_count,
+            'unanswered_count' => $this->unanswered_count,
+>>>>>>> origin/main
             'grade' => $this->grade,
             'status' => $this->status,
             'graded_at' => $this->graded_at?->toISOString(),
