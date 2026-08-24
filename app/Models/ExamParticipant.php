@@ -4,8 +4,11 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+<<<<<<< HEAD
+=======
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
+>>>>>>> origin/main
 
 class ExamParticipant extends Model
 {
@@ -49,12 +52,20 @@ class ExamParticipant extends Model
         return $this->belongsTo(Student::class, 'student_id');
     }
 
+<<<<<<< HEAD
+    public function result()
+=======
     public function result(): HasOne
+>>>>>>> origin/main
     {
         return $this->hasOne(ExamResult::class, 'participant_id');
     }
 
+<<<<<<< HEAD
+    public function answers()
+=======
     public function answers(): HasMany
+>>>>>>> origin/main
     {
         return $this->hasMany(ExamAnswer::class, 'participant_id');
     }

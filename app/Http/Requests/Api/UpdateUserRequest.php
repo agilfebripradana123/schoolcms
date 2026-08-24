@@ -7,7 +7,7 @@ use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Exceptions\HttpResponseException;
 use Illuminate\Validation\Rule;
 
-class UpdateExamRequest extends FormRequest
+class UpdateUserRequest extends FormRequest
 {
     public function authorize(): bool
     {
@@ -17,63 +17,50 @@ class UpdateExamRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'subject_id' => [
+            'role_id' => [
                 'sometimes',
                 'required',
                 'integer',
-                Rule::exists('subjects', 'id'),
+                Rule::exists('roles', 'id'),
             ],
-            'title' => [
+            'name' => [
                 'sometimes',
                 'required',
                 'string',
-                'max:200',
-            ],
-            'description' => [
-                'nullable',
-                'string',
-            ],
-            'duration_minutes' => [
-                'sometimes',
-                'required',
-                'integer',
-                'min:1',
-            ],
-            'total_questions' => [
-                'sometimes',
-                'integer',
-                'min:0',
-            ],
-            'passing_score' => [
-                'sometimes',
-                'integer',
-                'min:0',
                 'max:100',
             ],
-            'max_attempts' => [
+            'username' => [
                 'sometimes',
-                'integer',
-                'min:1',
-            ],
-            'shuffle_questions' => [
-                'sometimes',
-                'boolean',
-            ],
-            'shuffle_options' => [
-                'sometimes',
-                'boolean',
-            ],
-            'show_result' => [
-                'sometimes',
-                'boolean',
-            ],
-            'status' => [
-                'sometimes',
-<<<<<<< HEAD
-=======
+                'nullable',
                 'string',
->>>>>>> origin/main
-                Rule::in(['draft', 'published', 'ongoing', 'completed', 'archived']),
+                'max:100',
+                Rule::unique('users', 'username')
+                    ->whereNull('deleted_at')
+                    ->ignore($this->route('user')),
+            ],
+            'email' => [
+                'sometimes',
+                'required',
+                'email',
+                'max:100',
+                Rule::unique('users', 'email')
+                    ->whereNull('deleted_at')
+                    ->ignore($this->route('user')),
+            ],
+            'password' => [
+                'sometimes',
+                'nullable',
+                'string',
+                'min:6',
+            ],
+            'photo' => [
+                'nullable',
+                'string',
+                'max:255',
+            ],
+            'is_active' => [
+                'sometimes',
+                'boolean',
             ],
         ];
     }

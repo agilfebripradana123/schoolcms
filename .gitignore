@@ -1,25 +1,46 @@
-*.log
-.DS_Store
+# Environment
 .env
-.env.backup
-.env.production
-.phpactor.json
-.phpunit.result.cache
-/.fleet
-/.idea
-/.nova
-/.phpunit.cache
-/.vscode
-/.zed
-/auth.json
-/node_modules
+.env.*
+!.env.example
+
+# Logs
+*.log
+
+# PHP / Laravel
+/vendor
+/storage/*.key
+/storage/pail
 /public/build
 /public/hot
 /public/storage
-/storage/*.key
-/storage/pail
-/vendor
+/.phpunit.cache
+.phpunit.result.cache
+
+# Node
+/node_modules
+
+# SQLite local database
+/database/database.sqlite
+/database/database.sqlite-journal
+
+# IDE / Editor
+/.vscode
+/.idea
+/.fleet
+/.zed
+/.nova
+.phpactor.json
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Authentication
+/auth.json
+
+# Homestead
 Homestead.json
 Homestead.yaml
-Thumbs.db
+
+# Local database backup
 schoolcms_db.sql

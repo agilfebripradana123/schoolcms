@@ -27,21 +27,37 @@ class UpdateExamResultRequest extends FormRequest
             ],
             'total_score' => [
                 'sometimes',
+<<<<<<< HEAD
+                'required',
+=======
+>>>>>>> origin/main
                 'numeric',
                 'min:0',
             ],
             'correct_count' => [
                 'sometimes',
+<<<<<<< HEAD
+                'required',
+=======
+>>>>>>> origin/main
                 'integer',
                 'min:0',
             ],
             'wrong_count' => [
                 'sometimes',
+<<<<<<< HEAD
+                'required',
+=======
+>>>>>>> origin/main
                 'integer',
                 'min:0',
             ],
             'unanswered_count' => [
                 'sometimes',
+<<<<<<< HEAD
+                'required',
+=======
+>>>>>>> origin/main
                 'integer',
                 'min:0',
             ],

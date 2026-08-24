@@ -13,21 +13,14 @@ class ExamResultController extends Controller
 {
     public function index(\Illuminate\Http\Request $request): JsonResponse
     {
-        $validated = $request->validate([
-            'participant_id' => 'nullable|integer',
-            'status' => 'nullable|string|in:pending,graded',
-            'per_page' => 'nullable|integer|min:1|max:100',
-            'page' => 'nullable|integer|min:1',
-        ]);
-
-        $query = ExamResult::query();
+        $query = ExamResult::query()->with('participant');
 
         if ($request->filled('participant_id')) {
-            $query->where('participant_id', $validated['participant_id']);
+            $query->where('participant_id', $request->input('participant_id'));
         }
 
-        if (!empty($validated['status'])) {
-            $query->where('status', $validated['status']);
+        if ($request->filled('status')) {
+            $query->where('status', $request->input('status'));
         }
 
         $results = $query->orderBy('id', 'desc')->paginate($request->input('per_page', 15));
@@ -47,7 +40,7 @@ class ExamResultController extends Controller
 
     public function show(int $id): JsonResponse
     {
-        $result = ExamResult::find($id);
+        $result = ExamResult::with('participant')->find($id);
 
         if (!$result) {
             return response()->json([
@@ -67,6 +60,7 @@ class ExamResultController extends Controller
     public function store(StoreExamResultRequest $request): JsonResponse
     {
         $result = ExamResult::create($request->validated());
+        $result->load('participant');
 
         return response()->json([
             'success' => true,
@@ -88,6 +82,7 @@ class ExamResultController extends Controller
         }
 
         $result->update($request->validated());
+        $result->load('participant');
 
         return response()->json([
             'success' => true,

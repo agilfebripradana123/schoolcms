@@ -13,26 +13,18 @@ class ExamParticipantController extends Controller
 {
     public function index(\Illuminate\Http\Request $request): JsonResponse
     {
-        $validated = $request->validate([
-            'exam_id' => 'nullable|integer',
-            'student_id' => 'nullable|integer',
-            'status' => 'nullable|string|in:registered,started,completed,blocked',
-            'per_page' => 'nullable|integer|min:1|max:100',
-            'page' => 'nullable|integer|min:1',
-        ]);
-
-        $query = ExamParticipant::query();
+        $query = ExamParticipant::query()->with(['exam', 'student']);
 
         if ($request->filled('exam_id')) {
-            $query->where('exam_id', $validated['exam_id']);
+            $query->where('exam_id', $request->input('exam_id'));
         }
 
         if ($request->filled('student_id')) {
-            $query->where('student_id', $validated['student_id']);
+            $query->where('student_id', $request->input('student_id'));
         }
 
-        if (!empty($validated['status'])) {
-            $query->where('status', $validated['status']);
+        if ($request->filled('status')) {
+            $query->where('status', $request->input('status'));
         }
 
         $participants = $query->orderBy('id', 'desc')->paginate($request->input('per_page', 15));
@@ -52,7 +44,7 @@ class ExamParticipantController extends Controller
 
     public function show(int $id): JsonResponse
     {
-        $participant = ExamParticipant::find($id);
+        $participant = ExamParticipant::with(['exam', 'student'])->find($id);
 
         if (!$participant) {
             return response()->json([
@@ -72,6 +64,7 @@ class ExamParticipantController extends Controller
     public function store(StoreExamParticipantRequest $request): JsonResponse
     {
         $participant = ExamParticipant::create($request->validated());
+        $participant->load(['exam', 'student']);
 
         return response()->json([
             'success' => true,
@@ -93,6 +86,7 @@ class ExamParticipantController extends Controller
         }
 
         $participant->update($request->validated());
+        $participant->load(['exam', 'student']);
 
         return response()->json([
             'success' => true,

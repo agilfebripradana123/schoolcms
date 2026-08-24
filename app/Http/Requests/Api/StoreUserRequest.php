@@ -7,7 +7,7 @@ use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Exceptions\HttpResponseException;
 use Illuminate\Validation\Rule;
 
-class StoreExamRequest extends FormRequest
+class StoreUserRequest extends FormRequest
 {
     public function authorize(): bool
     {
@@ -17,53 +17,40 @@ class StoreExamRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'subject_id' => [
+            'role_id' => [
                 'required',
                 'integer',
-                Rule::exists('subjects', 'id'),
+                Rule::exists('roles', 'id'),
             ],
-            'title' => [
+            'name' => [
                 'required',
                 'string',
-                'max:200',
-            ],
-            'description' => [
-                'nullable',
-                'string',
-            ],
-            'duration_minutes' => [
-                'required',
-                'integer',
-                'min:1',
-            ],
-            'total_questions' => [
-                'integer',
-                'min:0',
-            ],
-            'passing_score' => [
-                'integer',
-                'min:0',
                 'max:100',
             ],
-            'max_attempts' => [
-                'integer',
-                'min:1',
-            ],
-            'shuffle_questions' => [
-                'boolean',
-            ],
-            'shuffle_options' => [
-                'boolean',
-            ],
-            'show_result' => [
-                'boolean',
-            ],
-            'status' => [
-<<<<<<< HEAD
-=======
+            'username' => [
+                'nullable',
                 'string',
->>>>>>> origin/main
-                Rule::in(['draft', 'published', 'ongoing', 'completed', 'archived']),
+                'max:100',
+                Rule::unique('users', 'username')->whereNull('deleted_at'),
+            ],
+            'email' => [
+                'required',
+                'email',
+                'max:100',
+                Rule::unique('users', 'email')->whereNull('deleted_at'),
+            ],
+            'password' => [
+                'required',
+                'string',
+                'min:6',
+            ],
+            'photo' => [
+                'nullable',
+                'string',
+                'max:255',
+            ],
+            'is_active' => [
+                'boolean',
             ],
         ];
     }

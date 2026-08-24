@@ -23,6 +23,14 @@ class ExamController extends Controller
             $query->where('status', $request->input('status'));
         }
 
+        if ($request->filled('search')) {
+            $search = $request->input('search');
+            $query->where(function ($q) use ($search) {
+                $q->where('title', 'LIKE', "%{$search}%")
+                    ->orWhere('description', 'LIKE', "%{$search}%");
+            });
+        }
+
         $exams = $query->orderBy('id', 'desc')->paginate($request->input('per_page', 15));
 
         return response()->json([
@@ -59,18 +67,12 @@ class ExamController extends Controller
 
     public function store(StoreExamRequest $request): JsonResponse
     {
-        $validated = $request->validated();
-
-        $exam = \Illuminate\Support\Facades\DB::connection('mysql')->transaction(function () use ($validated) {
-            return Exam::create($validated);
-        });
-
-        $exam->load('subject');
+        $exam = Exam::create($request->validated());
 
         return response()->json([
             'success' => true,
             'message' => 'Exam created successfully',
-            'data' => new ExamResource($exam),
+            'data' => new ExamResource($exam->load('subject')),
         ], 201);
     }
 
@@ -86,18 +88,12 @@ class ExamController extends Controller
             ], 404);
         }
 
-        $validated = $request->validated();
-
-        \Illuminate\Support\Facades\DB::connection('mysql')->transaction(function () use ($exam, $validated) {
-            $exam->update($validated);
-        });
-
-        $exam->refresh()->load('subject');
+        $exam->update($request->validated());
 
         return response()->json([
             'success' => true,
             'message' => 'Exam updated successfully',
-            'data' => new ExamResource($exam),
+            'data' => new ExamResource($exam->load('subject')),
         ]);
     }
 

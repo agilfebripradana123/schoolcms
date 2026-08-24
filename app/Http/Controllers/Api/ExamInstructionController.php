@@ -14,6 +14,12 @@ class ExamInstructionController extends Controller
     public function index(\Illuminate\Http\Request $request): JsonResponse
     {
         $instructions = ExamInstruction::query()
+            ->when($request->filled('search'), function ($q) use ($request) {
+                $q->where('title', 'LIKE', '%' . $request->input('search') . '%');
+            })
+            ->when($request->filled('is_active'), function ($q) use ($request) {
+                $q->where('is_active', (bool) $request->boolean('is_active'));
+            })
             ->orderBy('id', 'desc')
             ->paginate($request->input('per_page', 15));
 
@@ -51,11 +57,7 @@ class ExamInstructionController extends Controller
 
     public function store(StoreExamInstructionRequest $request): JsonResponse
     {
-        $validated = $request->validated();
-
-        $instruction = \Illuminate\Support\Facades\DB::connection('mysql')->transaction(function () use ($validated) {
-            return ExamInstruction::create($validated);
-        });
+        $instruction = ExamInstruction::create($request->validated());
 
         return response()->json([
             'success' => true,
@@ -76,13 +78,7 @@ class ExamInstructionController extends Controller
             ], 404);
         }
 
-        $validated = $request->validated();
-
-        \Illuminate\Support\Facades\DB::connection('mysql')->transaction(function () use ($instruction, $validated) {
-            $instruction->update($validated);
-        });
-
-        $instruction->refresh();
+        $instruction->update($request->validated());
 
         return response()->json([
             'success' => true,

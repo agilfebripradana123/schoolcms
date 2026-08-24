@@ -13,21 +13,14 @@ class ExamAnswerController extends Controller
 {
     public function index(\Illuminate\Http\Request $request): JsonResponse
     {
-        $validated = $request->validate([
-            'participant_id' => 'nullable|integer',
-            'question_id' => 'nullable|integer',
-            'per_page' => 'nullable|integer|min:1|max:100',
-            'page' => 'nullable|integer|min:1',
-        ]);
-
-        $query = ExamAnswer::query();
+        $query = ExamAnswer::query()->with('participant');
 
         if ($request->filled('participant_id')) {
-            $query->where('participant_id', $validated['participant_id']);
+            $query->where('participant_id', $request->input('participant_id'));
         }
 
         if ($request->filled('question_id')) {
-            $query->where('question_id', $validated['question_id']);
+            $query->where('question_id', $request->input('question_id'));
         }
 
         $answers = $query->orderBy('id', 'desc')->paginate($request->input('per_page', 15));
@@ -47,7 +40,7 @@ class ExamAnswerController extends Controller
 
     public function show(int $id): JsonResponse
     {
-        $answer = ExamAnswer::find($id);
+        $answer = ExamAnswer::with('participant')->find($id);
 
         if (!$answer) {
             return response()->json([
@@ -67,6 +60,7 @@ class ExamAnswerController extends Controller
     public function store(StoreExamAnswerRequest $request): JsonResponse
     {
         $answer = ExamAnswer::create($request->validated());
+        $answer->load('participant');
 
         return response()->json([
             'success' => true,
@@ -88,6 +82,7 @@ class ExamAnswerController extends Controller
         }
 
         $answer->update($request->validated());
+        $answer->load('participant');
 
         return response()->json([
             'success' => true,

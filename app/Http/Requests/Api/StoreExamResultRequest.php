@@ -21,20 +21,39 @@ class StoreExamResultRequest extends FormRequest
                 'required',
                 'integer',
                 Rule::exists('exam_participants', 'id'),
+<<<<<<< HEAD
+                Rule::unique('exam_results', 'participant_id'),
             ],
             'total_score' => [
+                'required',
+=======
+            ],
+            'total_score' => [
+>>>>>>> origin/main
                 'numeric',
                 'min:0',
             ],
             'correct_count' => [
+<<<<<<< HEAD
+                'required',
+=======
+>>>>>>> origin/main
                 'integer',
                 'min:0',
             ],
             'wrong_count' => [
+<<<<<<< HEAD
+                'required',
+=======
+>>>>>>> origin/main
                 'integer',
                 'min:0',
             ],
             'unanswered_count' => [
+<<<<<<< HEAD
+                'required',
+=======
+>>>>>>> origin/main
                 'integer',
                 'min:0',
             ],

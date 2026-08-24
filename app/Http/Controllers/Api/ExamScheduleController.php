@@ -27,6 +27,10 @@ class ExamScheduleController extends Controller
             $query->where('session_id', $request->input('session_id'));
         }
 
+        if ($request->filled('exam_date')) {
+            $query->whereDate('exam_date', $request->input('exam_date'));
+        }
+
         $schedules = $query->orderBy('id', 'desc')->paginate($request->input('per_page', 15));
 
         return response()->json([
@@ -63,18 +67,12 @@ class ExamScheduleController extends Controller
 
     public function store(StoreExamScheduleRequest $request): JsonResponse
     {
-        $validated = $request->validated();
-
-        $schedule = \Illuminate\Support\Facades\DB::connection('mysql')->transaction(function () use ($validated) {
-            return ExamSchedule::create($validated);
-        });
-
-        $schedule->load(['exam', 'room', 'session']);
+        $schedule = ExamSchedule::create($request->validated());
 
         return response()->json([
             'success' => true,
             'message' => 'Exam schedule created successfully',
-            'data' => new ExamScheduleResource($schedule),
+            'data' => new ExamScheduleResource($schedule->load(['exam', 'room', 'session'])),
         ], 201);
     }
 
@@ -90,18 +88,12 @@ class ExamScheduleController extends Controller
             ], 404);
         }
 
-        $validated = $request->validated();
-
-        \Illuminate\Support\Facades\DB::connection('mysql')->transaction(function () use ($schedule, $validated) {
-            $schedule->update($validated);
-        });
-
-        $schedule->refresh()->load(['exam', 'room', 'session']);
+        $schedule->update($request->validated());
 
         return response()->json([
             'success' => true,
             'message' => 'Exam schedule updated successfully',
-            'data' => new ExamScheduleResource($schedule),
+            'data' => new ExamScheduleResource($schedule->load(['exam', 'room', 'session'])),
         ]);
     }
 

@@ -12,6 +12,12 @@ use App\Http\Controllers\Api\StudentController;
 use App\Http\Controllers\Api\AnnouncementController;
 use App\Http\Controllers\Api\AttendanceController;
 use App\Http\Controllers\Api\SubjectController;
+
+use App\Http\Controllers\Api\RoleController;
+use App\Http\Controllers\Api\PermissionController;
+use App\Http\Controllers\Api\UserController;
+
+
 use App\Http\Controllers\Api\ExamController;
 use App\Http\Controllers\Api\ExamSessionController;
 use App\Http\Controllers\Api\ExamScheduleController;
@@ -138,6 +144,50 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::put('/rooms/{room}', [RoomController::class, 'update']);
         Route::patch('/rooms/{room}', [RoomController::class, 'update']);
         Route::delete('/rooms/{room}', [RoomController::class, 'destroy']);
+    });
+
+
+    // =========================
+
+    // ROLES
+    // =========================
+    Route::get('/roles', [RoleController::class, 'index']);
+    Route::get('/roles/{role}', [RoleController::class, 'show']);
+
+    Route::middleware('role:Admin,Administrator')->group(function () {
+        Route::post('/roles', [RoleController::class, 'store']);
+        Route::post('/roles/{role}/permissions', [RoleController::class, 'syncPermissions']);
+        Route::put('/roles/{role}', [RoleController::class, 'update']);
+        Route::patch('/roles/{role}', [RoleController::class, 'update']);
+        Route::delete('/roles/{role}', [RoleController::class, 'destroy']);
+    });
+
+
+    // =========================
+    // PERMISSIONS
+    // =========================
+    Route::get('/permissions', [PermissionController::class, 'index']);
+    Route::get('/permissions/{permission}', [PermissionController::class, 'show']);
+
+    Route::middleware('role:Admin,Administrator')->group(function () {
+        Route::post('/permissions', [PermissionController::class, 'store']);
+        Route::put('/permissions/{permission}', [PermissionController::class, 'update']);
+        Route::patch('/permissions/{permission}', [PermissionController::class, 'update']);
+        Route::delete('/permissions/{permission}', [PermissionController::class, 'destroy']);
+    });
+
+
+    // =========================
+    // USERS MANAGEMENT
+    // =========================
+    Route::get('/users', [UserController::class, 'index']);
+    Route::get('/users/{user}', [UserController::class, 'show']);
+
+    Route::middleware('role:Admin,Administrator')->group(function () {
+        Route::post('/users', [UserController::class, 'store']);
+        Route::put('/users/{user}', [UserController::class, 'update']);
+        Route::patch('/users/{user}', [UserController::class, 'update']);
+        Route::delete('/users/{user}', [UserController::class, 'destroy']);
     });
 
 

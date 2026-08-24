@@ -17,6 +17,7 @@ class UserResource extends JsonResource
             'email' => $this->email,
             'photo' => $this->photo,
             'is_active' => $this->is_active,
+            'role' => new \App\Http\Resources\RoleResource($this->whenLoaded('role')),
         ];
     }
 }

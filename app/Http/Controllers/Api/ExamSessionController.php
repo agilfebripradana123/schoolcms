@@ -14,6 +14,9 @@ class ExamSessionController extends Controller
     public function index(\Illuminate\Http\Request $request): JsonResponse
     {
         $sessions = ExamSession::query()
+            ->when($request->filled('search'), function ($q) use ($request) {
+                $q->where('name', 'LIKE', '%' . $request->input('search') . '%');
+            })
             ->orderBy('id', 'desc')
             ->paginate($request->input('per_page', 15));
 
@@ -51,11 +54,7 @@ class ExamSessionController extends Controller
 
     public function store(StoreExamSessionRequest $request): JsonResponse
     {
-        $validated = $request->validated();
-
-        $session = \Illuminate\Support\Facades\DB::connection('mysql')->transaction(function () use ($validated) {
-            return ExamSession::create($validated);
-        });
+        $session = ExamSession::create($request->validated());
 
         return response()->json([
             'success' => true,
@@ -76,13 +75,7 @@ class ExamSessionController extends Controller
             ], 404);
         }
 
-        $validated = $request->validated();
-
-        \Illuminate\Support\Facades\DB::connection('mysql')->transaction(function () use ($session, $validated) {
-            $session->update($validated);
-        });
-
-        $session->refresh();
+        $session->update($request->validated());
 
         return response()->json([
             'success' => true,
