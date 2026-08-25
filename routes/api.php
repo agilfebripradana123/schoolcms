@@ -168,6 +168,20 @@ Route::middleware('auth:sanctum')->group(function () {
 
 
     // =========================
+    // ASSETS
+    // =========================
+    Route::get('/assets', [AssetController::class, 'index']);
+    Route::get('/assets/{asset}', [AssetController::class, 'show']);
+
+    Route::middleware('role:Admin,Administrator')->group(function () {
+        Route::post('/assets', [AssetController::class, 'store']);
+        Route::put('/assets/{asset}', [AssetController::class, 'update']);
+        Route::patch('/assets/{asset}', [AssetController::class, 'update']);
+        Route::delete('/assets/{asset}', [AssetController::class, 'destroy']);
+    });
+
+
+    // =========================
 
     // ROLES
     // =========================
