@@ -187,6 +187,20 @@ Route::middleware('auth:sanctum')->group(function () {
 
 
     // =========================
+    // MAINTENANCE
+    // =========================
+    Route::get('/maintenance', [MaintenanceController::class, 'index']);
+    Route::get('/maintenance/{maintenance}', [MaintenanceController::class, 'show']);
+
+    Route::middleware('role:Admin,Administrator')->group(function () {
+        Route::post('/maintenance', [MaintenanceController::class, 'store']);
+        Route::put('/maintenance/{maintenance}', [MaintenanceController::class, 'update']);
+        Route::patch('/maintenance/{maintenance}', [MaintenanceController::class, 'update']);
+        Route::delete('/maintenance/{maintenance}', [MaintenanceController::class, 'destroy']);
+    });
+
+
+    // =========================
 
     // ROLES
     // =========================
