@@ -66,6 +66,10 @@ use App\Http\Controllers\Api\TeacherReportController;
 use App\Http\Controllers\Api\FinanceReportController;
 use App\Http\Controllers\Api\AttendanceReportController;
 use App\Http\Controllers\Api\InventoryReportController;
+use App\Http\Controllers\Api\IncomingLetterController;
+use App\Http\Controllers\Api\OutgoingLetterController;
+use App\Http\Controllers\Api\DocumentController;
+use App\Http\Controllers\Api\DispositionController;
 use App\Http\Controllers\Api\InventoryController;
 use App\Http\Controllers\Api\StockMovementController;
 
@@ -848,5 +852,61 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('/attendance/student-summary', [AttendanceReportController::class, 'studentSummary']);
         Route::get('/inventory/stock-summary', [InventoryReportController::class, 'stockSummary']);
         Route::get('/inventory/movement-summary', [InventoryReportController::class, 'movementSummary']);
+    });
+
+
+    // =========================
+    // INCOMING LETTERS (surat masuk)
+    // =========================
+    Route::get('/incoming-letters', [IncomingLetterController::class, 'index']);
+    Route::get('/incoming-letters/{incoming_letter}', [IncomingLetterController::class, 'show']);
+
+    Route::middleware('role:Admin,Administrator')->group(function () {
+        Route::post('/incoming-letters', [IncomingLetterController::class, 'store']);
+        Route::put('/incoming-letters/{incoming_letter}', [IncomingLetterController::class, 'update']);
+        Route::patch('/incoming-letters/{incoming_letter}', [IncomingLetterController::class, 'update']);
+        Route::delete('/incoming-letters/{incoming_letter}', [IncomingLetterController::class, 'destroy']);
+    });
+
+
+    // =========================
+    // OUTGOING LETTERS (surat keluar)
+    // =========================
+    Route::get('/outgoing-letters', [OutgoingLetterController::class, 'index']);
+    Route::get('/outgoing-letters/{outgoing_letter}', [OutgoingLetterController::class, 'show']);
+
+    Route::middleware('role:Admin,Administrator')->group(function () {
+        Route::post('/outgoing-letters', [OutgoingLetterController::class, 'store']);
+        Route::put('/outgoing-letters/{outgoing_letter}', [OutgoingLetterController::class, 'update']);
+        Route::patch('/outgoing-letters/{outgoing_letter}', [OutgoingLetterController::class, 'update']);
+        Route::delete('/outgoing-letters/{outgoing_letter}', [OutgoingLetterController::class, 'destroy']);
+    });
+
+
+    // =========================
+    // DOCUMENTS (dokumen arsip)
+    // =========================
+    Route::get('/documents', [DocumentController::class, 'index']);
+    Route::get('/documents/{document}', [DocumentController::class, 'show']);
+
+    Route::middleware('role:Admin,Administrator')->group(function () {
+        Route::post('/documents', [DocumentController::class, 'store']);
+        Route::put('/documents/{document}', [DocumentController::class, 'update']);
+        Route::patch('/documents/{document}', [DocumentController::class, 'update']);
+        Route::delete('/documents/{document}', [DocumentController::class, 'destroy']);
+    });
+
+
+    // =========================
+    // DISPOSITIONS (disposisi surat masuk)
+    // =========================
+    Route::get('/dispositions', [DispositionController::class, 'index']);
+    Route::get('/dispositions/{disposition}', [DispositionController::class, 'show']);
+
+    Route::middleware('role:Admin,Administrator')->group(function () {
+        Route::post('/dispositions', [DispositionController::class, 'store']);
+        Route::put('/dispositions/{disposition}', [DispositionController::class, 'update']);
+        Route::patch('/dispositions/{disposition}', [DispositionController::class, 'update']);
+        Route::delete('/dispositions/{disposition}', [DispositionController::class, 'destroy']);
     });
 });
