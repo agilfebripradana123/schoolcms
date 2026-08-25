@@ -36,7 +36,15 @@ use App\Http\Controllers\Api\AssignmentController;
 use App\Http\Controllers\Api\ReportCardController;
 use App\Http\Controllers\Api\AuditLogController;
 use App\Http\Controllers\Api\SettingController;
-use App\Http\Controllers\Api\AssetController;
+use App\Http\Controllers\Api\StudentParentController;
+use App\Http\Controllers\Api\GuardianController;
+use App\Http\Controllers\Api\StudentHistoryController;
+use App\Http\Controllers\Api\AchievementController;
+use App\Http\Controllers\Api\ViolationController;
+use App\Http\Controllers\Api\ScholarshipController;
+use App\Http\Controllers\Api\TransferController;
+use App\Http\Controllers\Api\AlumniController;
+use App\Http\Controllers\Api\StudentIdCardController;
 
 Route::post('/login', [AuthController::class, 'login']);
 
@@ -460,5 +468,131 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::put('/settings/{setting}', [SettingController::class, 'update']);
         Route::patch('/settings/{setting}', [SettingController::class, 'update']);
         Route::delete('/settings/{setting}', [SettingController::class, 'destroy']);
+    });
+
+
+    // =========================
+    // PARENTS (data orang tua)
+    // =========================
+    Route::get('/parents', [StudentParentController::class, 'index']);
+    Route::get('/parents/{parent}', [StudentParentController::class, 'show']);
+
+    Route::middleware('role:Admin,Administrator')->group(function () {
+        Route::post('/parents', [StudentParentController::class, 'store']);
+        Route::put('/parents/{parent}', [StudentParentController::class, 'update']);
+        Route::patch('/parents/{parent}', [StudentParentController::class, 'update']);
+        Route::delete('/parents/{parent}', [StudentParentController::class, 'destroy']);
+    });
+
+
+    // =========================
+    // GUARDIANS (wali)
+    // =========================
+    Route::get('/guardians', [GuardianController::class, 'index']);
+    Route::get('/guardians/{guardian}', [GuardianController::class, 'show']);
+
+    Route::middleware('role:Admin,Administrator')->group(function () {
+        Route::post('/guardians', [GuardianController::class, 'store']);
+        Route::put('/guardians/{guardian}', [GuardianController::class, 'update']);
+        Route::patch('/guardians/{guardian}', [GuardianController::class, 'update']);
+        Route::delete('/guardians/{guardian}', [GuardianController::class, 'destroy']);
+    });
+
+
+    // =========================
+    // STUDENT HISTORIES
+    // =========================
+    Route::get('/student-histories', [StudentHistoryController::class, 'index']);
+    Route::get('/student-histories/{student_history}', [StudentHistoryController::class, 'show']);
+
+    Route::middleware('role:Admin,Administrator')->group(function () {
+        Route::post('/student-histories', [StudentHistoryController::class, 'store']);
+        Route::put('/student-histories/{student_history}', [StudentHistoryController::class, 'update']);
+        Route::patch('/student-histories/{student_history}', [StudentHistoryController::class, 'update']);
+        Route::delete('/student-histories/{student_history}', [StudentHistoryController::class, 'destroy']);
+    });
+
+
+    // =========================
+    // ACHIEVEMENTS (prestasi)
+    // =========================
+    Route::get('/achievements', [AchievementController::class, 'index']);
+    Route::get('/achievements/{achievement}', [AchievementController::class, 'show']);
+
+    Route::middleware('role:Admin,Administrator')->group(function () {
+        Route::post('/achievements', [AchievementController::class, 'store']);
+        Route::put('/achievements/{achievement}', [AchievementController::class, 'update']);
+        Route::patch('/achievements/{achievement}', [AchievementController::class, 'update']);
+        Route::delete('/achievements/{achievement}', [AchievementController::class, 'destroy']);
+    });
+
+
+    // =========================
+    // VIOLATIONS (pelanggaran)
+    // =========================
+    Route::get('/violations', [ViolationController::class, 'index']);
+    Route::get('/violations/{violation}', [ViolationController::class, 'show']);
+
+    Route::middleware('role:Admin,Administrator')->group(function () {
+        Route::post('/violations', [ViolationController::class, 'store']);
+        Route::put('/violations/{violation}', [ViolationController::class, 'update']);
+        Route::patch('/violations/{violation}', [ViolationController::class, 'update']);
+        Route::delete('/violations/{violation}', [ViolationController::class, 'destroy']);
+    });
+
+
+    // =========================
+    // SCHOLARSHIPS (beasiswa)
+    // =========================
+    Route::get('/scholarships', [ScholarshipController::class, 'index']);
+    Route::get('/scholarships/{scholarship}', [ScholarshipController::class, 'show']);
+
+    Route::middleware('role:Admin,Administrator')->group(function () {
+        Route::post('/scholarships', [ScholarshipController::class, 'store']);
+        Route::put('/scholarships/{scholarship}', [ScholarshipController::class, 'update']);
+        Route::patch('/scholarships/{scholarship}', [ScholarshipController::class, 'update']);
+        Route::delete('/scholarships/{scholarship}', [ScholarshipController::class, 'destroy']);
+    });
+
+
+    // =========================
+    // TRANSFERS (mutasi)
+    // =========================
+    Route::get('/transfers', [TransferController::class, 'index']);
+    Route::get('/transfers/{transfer}', [TransferController::class, 'show']);
+
+    Route::middleware('role:Admin,Administrator')->group(function () {
+        Route::post('/transfers', [TransferController::class, 'store']);
+        Route::put('/transfers/{transfer}', [TransferController::class, 'update']);
+        Route::patch('/transfers/{transfer}', [TransferController::class, 'update']);
+        Route::delete('/transfers/{transfer}', [TransferController::class, 'destroy']);
+    });
+
+
+    // =========================
+    // ALUMNI
+    // =========================
+    Route::get('/alumni', [AlumniController::class, 'index']);
+    Route::get('/alumni/{alumni}', [AlumniController::class, 'show']);
+
+    Route::middleware('role:Admin,Administrator')->group(function () {
+        Route::post('/alumni', [AlumniController::class, 'store']);
+        Route::put('/alumni/{alumni}', [AlumniController::class, 'update']);
+        Route::patch('/alumni/{alumni}', [AlumniController::class, 'update']);
+        Route::delete('/alumni/{alumni}', [AlumniController::class, 'destroy']);
+    });
+
+
+    // =========================
+    // STUDENT ID CARDS (kartu pelajar)
+    // =========================
+    Route::get('/student-id-cards', [StudentIdCardController::class, 'index']);
+    Route::get('/student-id-cards/{student_id_card}', [StudentIdCardController::class, 'show']);
+
+    Route::middleware('role:Admin,Administrator')->group(function () {
+        Route::post('/student-id-cards', [StudentIdCardController::class, 'store']);
+        Route::put('/student-id-cards/{student_id_card}', [StudentIdCardController::class, 'update']);
+        Route::patch('/student-id-cards/{student_id_card}', [StudentIdCardController::class, 'update']);
+        Route::delete('/student-id-cards/{student_id_card}', [StudentIdCardController::class, 'destroy']);
     });
 });
