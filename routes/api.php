@@ -53,6 +53,11 @@ use App\Http\Controllers\Api\AssetController;
 use App\Http\Controllers\Api\MaintenanceController;
 use App\Http\Controllers\Api\InventoryController;
 use App\Http\Controllers\Api\StockMovementController;
+use App\Http\Controllers\Api\RegistrationController;
+use App\Http\Controllers\Api\VerificationController;
+use App\Http\Controllers\Api\SelectionController;
+use App\Http\Controllers\Api\ReRegistrationController;
+use App\Http\Controllers\Api\DocumentController;
 
 Route::post('/login', [AuthController::class, 'login']);
 
@@ -378,6 +383,46 @@ Route::middleware('auth:sanctum')->group(function () {
 
 
     // =========================
+    // PPDB REGISTRATIONS
+    // =========================
+    Route::middleware('throttle:60,1')->group(function () {
+        Route::get('/registrations', [RegistrationController::class, 'index']);
+        Route::get('/registrations/{registration}', [RegistrationController::class, 'show']);
+    });
+
+    Route::middleware(['role:Admin,Administrator', 'throttle:30,1'])->group(function () {
+        Route::post('/registrations', [RegistrationController::class, 'store']);
+        Route::put('/registrations/{registration}', [RegistrationController::class, 'update']);
+        Route::patch('/registrations/{registration}', [RegistrationController::class, 'update']);
+        Route::delete('/registrations/{registration}', [RegistrationController::class, 'destroy']);
+    });
+
+
+    // =========================
+    // PPDB WORKFLOW
+    // =========================
+    Route::middleware(['role:Admin,Administrator', 'throttle:30,1'])->group(function () {
+        Route::post('/registrations/{registration}/verify', [VerificationController::class, 'verify']);
+        Route::post('/registrations/{registration}/reject', [VerificationController::class, 'reject']);
+        Route::post('/registrations/{registration}/select', [SelectionController::class, 'select']);
+        Route::post('/registrations/{registration}/not-select', [SelectionController::class, 'notSelect']);
+        Route::post('/registrations/{registration}/re-register', [ReRegistrationController::class, 'reRegister']);
+        Route::post('/registrations/{registration}/verify-re-registration', [ReRegistrationController::class, 'verifyReRegistration']);
+    });
+
+    Route::middleware(['role:Admin,Administrator', 'throttle:10,1'])->group(function () {
+        Route::post('/registrations/{registration}/documents', [DocumentController::class, 'store']);
+        Route::delete('/registrations/{registration}/documents/{type}', [DocumentController::class, 'destroy']);
+    });
+
+    Route::middleware('throttle:30,1')->group(function () {
+        Route::get('/registrations/{registration}/documents', [DocumentController::class, 'index']);
+        Route::get('/registrations/{registration}/documents/{type}', [DocumentController::class, 'show']);
+    });
+
+
+    // =========================
+
     // SEMESTERS
     // =========================
     Route::get('/semesters', [SemesterController::class, 'index']);
