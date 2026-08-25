@@ -53,6 +53,8 @@ use App\Http\Controllers\Api\AssetController;
 use App\Http\Controllers\Api\MaintenanceController;
 use App\Http\Controllers\Api\UserNotificationController;
 use App\Http\Controllers\Api\CalendarController;
+use App\Http\Controllers\Api\CounselingController;
+use App\Http\Controllers\Api\ExtracurricularController;
 use App\Http\Controllers\Api\InventoryController;
 use App\Http\Controllers\Api\StockMovementController;
 
@@ -721,5 +723,33 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::put('/calendars/{calendar}', [CalendarController::class, 'update']);
         Route::patch('/calendars/{calendar}', [CalendarController::class, 'update']);
         Route::delete('/calendars/{calendar}', [CalendarController::class, 'destroy']);
+    });
+
+
+    // =========================
+    // COUNSELINGS (bimbingan konseling)
+    // =========================
+    Route::get('/counselings', [CounselingController::class, 'index']);
+    Route::get('/counselings/{counseling}', [CounselingController::class, 'show']);
+
+    Route::middleware('role:Admin,Administrator')->group(function () {
+        Route::post('/counselings', [CounselingController::class, 'store']);
+        Route::put('/counselings/{counseling}', [CounselingController::class, 'update']);
+        Route::patch('/counselings/{counseling}', [CounselingController::class, 'update']);
+        Route::delete('/counselings/{counseling}', [CounselingController::class, 'destroy']);
+    });
+
+
+    // =========================
+    // EXTRACURRICULARS
+    // =========================
+    Route::get('/extracurriculums', [ExtracurricularController::class, 'index']);
+    Route::get('/extracurriculums/{extracurricular}', [ExtracurricularController::class, 'show']);
+
+    Route::middleware('role:Admin,Administrator')->group(function () {
+        Route::post('/extracurriculums', [ExtracurricularController::class, 'store']);
+        Route::put('/extracurriculums/{extracurricular}', [ExtracurricularController::class, 'update']);
+        Route::patch('/extracurriculums/{extracurricular}', [ExtracurricularController::class, 'update']);
+        Route::delete('/extracurriculums/{extracurricular}', [ExtracurricularController::class, 'destroy']);
     });
 });
