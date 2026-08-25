@@ -37,6 +37,7 @@ use App\Http\Controllers\Api\ReportCardController;
 use App\Http\Controllers\Api\AuditLogController;
 use App\Http\Controllers\Api\SettingController;
 use App\Http\Controllers\Api\AssetController;
+use App\Http\Controllers\Api\MaintenanceController;
 
 Route::post('/login', [AuthController::class, 'login']);
 
@@ -170,6 +171,20 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::put('/assets/{asset}', [AssetController::class, 'update']);
         Route::patch('/assets/{asset}', [AssetController::class, 'update']);
         Route::delete('/assets/{asset}', [AssetController::class, 'destroy']);
+    });
+
+
+    // =========================
+    // MAINTENANCE
+    // =========================
+    Route::get('/maintenance', [MaintenanceController::class, 'index']);
+    Route::get('/maintenance/{maintenance}', [MaintenanceController::class, 'show']);
+
+    Route::middleware('role:Admin,Administrator')->group(function () {
+        Route::post('/maintenance', [MaintenanceController::class, 'store']);
+        Route::put('/maintenance/{maintenance}', [MaintenanceController::class, 'update']);
+        Route::patch('/maintenance/{maintenance}', [MaintenanceController::class, 'update']);
+        Route::delete('/maintenance/{maintenance}', [MaintenanceController::class, 'destroy']);
     });
 
 
