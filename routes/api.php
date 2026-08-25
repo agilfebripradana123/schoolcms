@@ -55,6 +55,11 @@ use App\Http\Controllers\Api\UserNotificationController;
 use App\Http\Controllers\Api\CalendarController;
 use App\Http\Controllers\Api\CounselingController;
 use App\Http\Controllers\Api\ExtracurricularController;
+use App\Http\Controllers\Api\FeeTypeController;
+use App\Http\Controllers\Api\BillingController;
+use App\Http\Controllers\Api\PaymentController;
+use App\Http\Controllers\Api\PaymentTransactionController;
+use App\Http\Controllers\Api\FinancialReportController;
 use App\Http\Controllers\Api\InventoryController;
 use App\Http\Controllers\Api\StockMovementController;
 
@@ -751,5 +756,75 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::put('/extracurriculums/{extracurricular}', [ExtracurricularController::class, 'update']);
         Route::patch('/extracurriculums/{extracurricular}', [ExtracurricularController::class, 'update']);
         Route::delete('/extracurriculums/{extracurricular}', [ExtracurricularController::class, 'destroy']);
+    });
+
+
+    // =========================
+    // FEE TYPES (jenis biaya)
+    // =========================
+    Route::get('/fee-types', [FeeTypeController::class, 'index']);
+    Route::get('/fee-types/{fee_type}', [FeeTypeController::class, 'show']);
+
+    Route::middleware('role:Admin,Administrator')->group(function () {
+        Route::post('/fee-types', [FeeTypeController::class, 'store']);
+        Route::put('/fee-types/{fee_type}', [FeeTypeController::class, 'update']);
+        Route::patch('/fee-types/{fee_type}', [FeeTypeController::class, 'update']);
+        Route::delete('/fee-types/{fee_type}', [FeeTypeController::class, 'destroy']);
+    });
+
+
+    // =========================
+    // BILLINGS (tagihan)
+    // =========================
+    Route::get('/billings', [BillingController::class, 'index']);
+    Route::get('/billings/{billing}', [BillingController::class, 'show']);
+
+    Route::middleware('role:Admin,Administrator')->group(function () {
+        Route::post('/billings', [BillingController::class, 'store']);
+        Route::put('/billings/{billing}', [BillingController::class, 'update']);
+        Route::patch('/billings/{billing}', [BillingController::class, 'update']);
+        Route::delete('/billings/{billing}', [BillingController::class, 'destroy']);
+    });
+
+
+    // =========================
+    // PAYMENTS (pembayaran)
+    // =========================
+    Route::get('/payments', [PaymentController::class, 'index']);
+    Route::get('/payments/{payment}', [PaymentController::class, 'show']);
+
+    Route::middleware('role:Admin,Administrator')->group(function () {
+        Route::post('/payments', [PaymentController::class, 'store']);
+        Route::put('/payments/{payment}', [PaymentController::class, 'update']);
+        Route::patch('/payments/{payment}', [PaymentController::class, 'update']);
+        Route::delete('/payments/{payment}', [PaymentController::class, 'destroy']);
+    });
+
+
+    // =========================
+    // PAYMENT TRANSACTIONS (mutasi transaksi)
+    // =========================
+    Route::get('/payment-transactions', [PaymentTransactionController::class, 'index']);
+    Route::get('/payment-transactions/{payment_transaction}', [PaymentTransactionController::class, 'show']);
+
+    Route::middleware('role:Admin,Administrator')->group(function () {
+        Route::post('/payment-transactions', [PaymentTransactionController::class, 'store']);
+        Route::put('/payment-transactions/{payment_transaction}', [PaymentTransactionController::class, 'update']);
+        Route::patch('/payment-transactions/{payment_transaction}', [PaymentTransactionController::class, 'update']);
+        Route::delete('/payment-transactions/{payment_transaction}', [PaymentTransactionController::class, 'destroy']);
+    });
+
+
+    // =========================
+    // FINANCIAL REPORTS (laporan keuangan)
+    // =========================
+    Route::get('/financial-reports', [FinancialReportController::class, 'index']);
+    Route::get('/financial-reports/{financial_report}', [FinancialReportController::class, 'show']);
+
+    Route::middleware('role:Admin,Administrator')->group(function () {
+        Route::post('/financial-reports', [FinancialReportController::class, 'store']);
+        Route::put('/financial-reports/{financial_report}', [FinancialReportController::class, 'update']);
+        Route::patch('/financial-reports/{financial_report}', [FinancialReportController::class, 'update']);
+        Route::delete('/financial-reports/{financial_report}', [FinancialReportController::class, 'destroy']);
     });
 });
