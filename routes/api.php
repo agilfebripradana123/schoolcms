@@ -50,6 +50,7 @@ use App\Http\Controllers\Api\TeacherAttendanceController;
 use App\Http\Controllers\Api\TeacherLeaveController;
 use App\Http\Controllers\Api\TeacherDocumentController;
 use App\Http\Controllers\Api\AssetController;
+use App\Http\Controllers\Api\MaintenanceController;
 
 Route::post('/login', [AuthController::class, 'login']);
 
