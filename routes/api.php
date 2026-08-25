@@ -51,6 +51,25 @@ use App\Http\Controllers\Api\TeacherLeaveController;
 use App\Http\Controllers\Api\TeacherDocumentController;
 use App\Http\Controllers\Api\AssetController;
 use App\Http\Controllers\Api\MaintenanceController;
+use App\Http\Controllers\Api\UserNotificationController;
+use App\Http\Controllers\Api\CalendarController;
+use App\Http\Controllers\Api\CounselingController;
+use App\Http\Controllers\Api\ExtracurricularController;
+use App\Http\Controllers\Api\FeeTypeController;
+use App\Http\Controllers\Api\BillingController;
+use App\Http\Controllers\Api\PaymentController;
+use App\Http\Controllers\Api\PaymentTransactionController;
+use App\Http\Controllers\Api\FinancialReportController;
+use App\Http\Controllers\Api\AcademicReportController;
+use App\Http\Controllers\Api\StudentReportController;
+use App\Http\Controllers\Api\TeacherReportController;
+use App\Http\Controllers\Api\FinanceReportController;
+use App\Http\Controllers\Api\AttendanceReportController;
+use App\Http\Controllers\Api\InventoryReportController;
+use App\Http\Controllers\Api\IncomingLetterController;
+use App\Http\Controllers\Api\OutgoingLetterController;
+use App\Http\Controllers\Api\DocumentController;
+use App\Http\Controllers\Api\DispositionController;
 use App\Http\Controllers\Api\InventoryController;
 use App\Http\Controllers\Api\StockMovementController;
 use App\Http\Controllers\Api\RegistrationController;
@@ -735,5 +754,204 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::put('/teacher-documents/{teacher_document}', [TeacherDocumentController::class, 'update']);
         Route::patch('/teacher-documents/{teacher_document}', [TeacherDocumentController::class, 'update']);
         Route::delete('/teacher-documents/{teacher_document}', [TeacherDocumentController::class, 'destroy']);
+    });
+
+
+    // =========================
+    // NOTIFICATIONS
+    // =========================
+    Route::get('/notifications/my', [UserNotificationController::class, 'my']);
+    Route::get('/notifications', [UserNotificationController::class, 'index']);
+    Route::get('/notifications/{notification}', [UserNotificationController::class, 'show']);
+
+    Route::middleware('role:Admin,Administrator')->group(function () {
+        Route::post('/notifications', [UserNotificationController::class, 'store']);
+        Route::put('/notifications/{notification}', [UserNotificationController::class, 'update']);
+        Route::patch('/notifications/{notification}', [UserNotificationController::class, 'update']);
+        Route::delete('/notifications/{notification}', [UserNotificationController::class, 'destroy']);
+    });
+
+
+    // =========================
+    // CALENDARS (kalender akademik)
+    // =========================
+    Route::get('/calendars', [CalendarController::class, 'index']);
+    Route::get('/calendars/{calendar}', [CalendarController::class, 'show']);
+
+    Route::middleware('role:Admin,Administrator')->group(function () {
+        Route::post('/calendars', [CalendarController::class, 'store']);
+        Route::put('/calendars/{calendar}', [CalendarController::class, 'update']);
+        Route::patch('/calendars/{calendar}', [CalendarController::class, 'update']);
+        Route::delete('/calendars/{calendar}', [CalendarController::class, 'destroy']);
+    });
+
+
+    // =========================
+    // COUNSELINGS (bimbingan konseling)
+    // =========================
+    Route::get('/counselings', [CounselingController::class, 'index']);
+    Route::get('/counselings/{counseling}', [CounselingController::class, 'show']);
+
+    Route::middleware('role:Admin,Administrator')->group(function () {
+        Route::post('/counselings', [CounselingController::class, 'store']);
+        Route::put('/counselings/{counseling}', [CounselingController::class, 'update']);
+        Route::patch('/counselings/{counseling}', [CounselingController::class, 'update']);
+        Route::delete('/counselings/{counseling}', [CounselingController::class, 'destroy']);
+    });
+
+
+    // =========================
+    // EXTRACURRICULARS
+    // =========================
+    Route::get('/extracurriculums', [ExtracurricularController::class, 'index']);
+    Route::get('/extracurriculums/{extracurricular}', [ExtracurricularController::class, 'show']);
+
+    Route::middleware('role:Admin,Administrator')->group(function () {
+        Route::post('/extracurriculums', [ExtracurricularController::class, 'store']);
+        Route::put('/extracurriculums/{extracurricular}', [ExtracurricularController::class, 'update']);
+        Route::patch('/extracurriculums/{extracurricular}', [ExtracurricularController::class, 'update']);
+        Route::delete('/extracurriculums/{extracurricular}', [ExtracurricularController::class, 'destroy']);
+    });
+
+
+    // =========================
+    // FEE TYPES (jenis biaya)
+    // =========================
+    Route::get('/fee-types', [FeeTypeController::class, 'index']);
+    Route::get('/fee-types/{fee_type}', [FeeTypeController::class, 'show']);
+
+    Route::middleware('role:Admin,Administrator')->group(function () {
+        Route::post('/fee-types', [FeeTypeController::class, 'store']);
+        Route::put('/fee-types/{fee_type}', [FeeTypeController::class, 'update']);
+        Route::patch('/fee-types/{fee_type}', [FeeTypeController::class, 'update']);
+        Route::delete('/fee-types/{fee_type}', [FeeTypeController::class, 'destroy']);
+    });
+
+
+    // =========================
+    // BILLINGS (tagihan)
+    // =========================
+    Route::get('/billings', [BillingController::class, 'index']);
+    Route::get('/billings/{billing}', [BillingController::class, 'show']);
+
+    Route::middleware('role:Admin,Administrator')->group(function () {
+        Route::post('/billings', [BillingController::class, 'store']);
+        Route::put('/billings/{billing}', [BillingController::class, 'update']);
+        Route::patch('/billings/{billing}', [BillingController::class, 'update']);
+        Route::delete('/billings/{billing}', [BillingController::class, 'destroy']);
+    });
+
+
+    // =========================
+    // PAYMENTS (pembayaran)
+    // =========================
+    Route::get('/payments', [PaymentController::class, 'index']);
+    Route::get('/payments/{payment}', [PaymentController::class, 'show']);
+
+    Route::middleware('role:Admin,Administrator')->group(function () {
+        Route::post('/payments', [PaymentController::class, 'store']);
+        Route::put('/payments/{payment}', [PaymentController::class, 'update']);
+        Route::patch('/payments/{payment}', [PaymentController::class, 'update']);
+        Route::delete('/payments/{payment}', [PaymentController::class, 'destroy']);
+    });
+
+
+    // =========================
+    // PAYMENT TRANSACTIONS (mutasi transaksi)
+    // =========================
+    Route::get('/payment-transactions', [PaymentTransactionController::class, 'index']);
+    Route::get('/payment-transactions/{payment_transaction}', [PaymentTransactionController::class, 'show']);
+
+    Route::middleware('role:Admin,Administrator')->group(function () {
+        Route::post('/payment-transactions', [PaymentTransactionController::class, 'store']);
+        Route::put('/payment-transactions/{payment_transaction}', [PaymentTransactionController::class, 'update']);
+        Route::patch('/payment-transactions/{payment_transaction}', [PaymentTransactionController::class, 'update']);
+        Route::delete('/payment-transactions/{payment_transaction}', [PaymentTransactionController::class, 'destroy']);
+    });
+
+
+    // =========================
+    // FINANCIAL REPORTS (laporan keuangan)
+    // =========================
+    Route::get('/financial-reports', [FinancialReportController::class, 'index']);
+    Route::get('/financial-reports/{financial_report}', [FinancialReportController::class, 'show']);
+
+    Route::middleware('role:Admin,Administrator')->group(function () {
+        Route::post('/financial-reports', [FinancialReportController::class, 'store']);
+        Route::put('/financial-reports/{financial_report}', [FinancialReportController::class, 'update']);
+        Route::patch('/financial-reports/{financial_report}', [FinancialReportController::class, 'update']);
+        Route::delete('/financial-reports/{financial_report}', [FinancialReportController::class, 'destroy']);
+    });
+
+
+    // =========================
+    // REPORTS (read-only agregasi)
+    // =========================
+    Route::prefix('reports')->group(function () {
+        Route::get('/academic/grades-summary', [AcademicReportController::class, 'gradesSummary']);
+        Route::get('/students/summary', [StudentReportController::class, 'summary']);
+        Route::get('/teachers/summary', [TeacherReportController::class, 'summary']);
+        Route::get('/teachers/attendance-summary', [TeacherReportController::class, 'attendanceSummary']);
+        Route::get('/finance/summary', [FinanceReportController::class, 'summary']);
+        Route::get('/attendance/daily', [AttendanceReportController::class, 'daily']);
+        Route::get('/attendance/student-summary', [AttendanceReportController::class, 'studentSummary']);
+        Route::get('/inventory/stock-summary', [InventoryReportController::class, 'stockSummary']);
+        Route::get('/inventory/movement-summary', [InventoryReportController::class, 'movementSummary']);
+    });
+
+
+    // =========================
+    // INCOMING LETTERS (surat masuk)
+    // =========================
+    Route::get('/incoming-letters', [IncomingLetterController::class, 'index']);
+    Route::get('/incoming-letters/{incoming_letter}', [IncomingLetterController::class, 'show']);
+
+    Route::middleware('role:Admin,Administrator')->group(function () {
+        Route::post('/incoming-letters', [IncomingLetterController::class, 'store']);
+        Route::put('/incoming-letters/{incoming_letter}', [IncomingLetterController::class, 'update']);
+        Route::patch('/incoming-letters/{incoming_letter}', [IncomingLetterController::class, 'update']);
+        Route::delete('/incoming-letters/{incoming_letter}', [IncomingLetterController::class, 'destroy']);
+    });
+
+
+    // =========================
+    // OUTGOING LETTERS (surat keluar)
+    // =========================
+    Route::get('/outgoing-letters', [OutgoingLetterController::class, 'index']);
+    Route::get('/outgoing-letters/{outgoing_letter}', [OutgoingLetterController::class, 'show']);
+
+    Route::middleware('role:Admin,Administrator')->group(function () {
+        Route::post('/outgoing-letters', [OutgoingLetterController::class, 'store']);
+        Route::put('/outgoing-letters/{outgoing_letter}', [OutgoingLetterController::class, 'update']);
+        Route::patch('/outgoing-letters/{outgoing_letter}', [OutgoingLetterController::class, 'update']);
+        Route::delete('/outgoing-letters/{outgoing_letter}', [OutgoingLetterController::class, 'destroy']);
+    });
+
+
+    // =========================
+    // DOCUMENTS (dokumen arsip)
+    // =========================
+    Route::get('/documents', [DocumentController::class, 'index']);
+    Route::get('/documents/{document}', [DocumentController::class, 'show']);
+
+    Route::middleware('role:Admin,Administrator')->group(function () {
+        Route::post('/documents', [DocumentController::class, 'store']);
+        Route::put('/documents/{document}', [DocumentController::class, 'update']);
+        Route::patch('/documents/{document}', [DocumentController::class, 'update']);
+        Route::delete('/documents/{document}', [DocumentController::class, 'destroy']);
+    });
+
+
+    // =========================
+    // DISPOSITIONS (disposisi surat masuk)
+    // =========================
+    Route::get('/dispositions', [DispositionController::class, 'index']);
+    Route::get('/dispositions/{disposition}', [DispositionController::class, 'show']);
+
+    Route::middleware('role:Admin,Administrator')->group(function () {
+        Route::post('/dispositions', [DispositionController::class, 'store']);
+        Route::put('/dispositions/{disposition}', [DispositionController::class, 'update']);
+        Route::patch('/dispositions/{disposition}', [DispositionController::class, 'update']);
+        Route::delete('/dispositions/{disposition}', [DispositionController::class, 'destroy']);
     });
 });
