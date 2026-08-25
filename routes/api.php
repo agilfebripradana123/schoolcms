@@ -38,6 +38,8 @@ use App\Http\Controllers\Api\AuditLogController;
 use App\Http\Controllers\Api\SettingController;
 use App\Http\Controllers\Api\AssetController;
 use App\Http\Controllers\Api\MaintenanceController;
+use App\Http\Controllers\Api\InventoryController;
+use App\Http\Controllers\Api\StockMovementController;
 
 Route::post('/login', [AuthController::class, 'login']);
 
@@ -185,6 +187,24 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::put('/maintenance/{maintenance}', [MaintenanceController::class, 'update']);
         Route::patch('/maintenance/{maintenance}', [MaintenanceController::class, 'update']);
         Route::delete('/maintenance/{maintenance}', [MaintenanceController::class, 'destroy']);
+    });
+
+
+    // =========================
+    // INVENTORY
+    // =========================
+    Route::get('/inventory', [InventoryController::class, 'index']);
+    Route::get('/inventory/{inventory}', [InventoryController::class, 'show']);
+    Route::get('/inventory/{inventory}/movements', [StockMovementController::class, 'movements']);
+
+    Route::middleware('role:Admin,Administrator')->group(function () {
+        Route::post('/inventory', [InventoryController::class, 'store']);
+        Route::put('/inventory/{inventory}', [InventoryController::class, 'update']);
+        Route::patch('/inventory/{inventory}', [InventoryController::class, 'update']);
+        Route::delete('/inventory/{inventory}', [InventoryController::class, 'destroy']);
+        Route::post('/inventory/{inventory}/stock-in', [StockMovementController::class, 'stockIn']);
+        Route::post('/inventory/{inventory}/stock-out', [StockMovementController::class, 'stockOut']);
+        Route::post('/inventory/{inventory}/adjustment', [StockMovementController::class, 'adjustment']);
     });
 
 
