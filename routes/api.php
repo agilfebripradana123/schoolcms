@@ -51,6 +51,8 @@ use App\Http\Controllers\Api\TeacherLeaveController;
 use App\Http\Controllers\Api\TeacherDocumentController;
 use App\Http\Controllers\Api\AssetController;
 use App\Http\Controllers\Api\MaintenanceController;
+use App\Http\Controllers\Api\UserNotificationController;
+use App\Http\Controllers\Api\CalendarController;
 
 Route::post('/login', [AuthController::class, 'login']);
 
@@ -670,5 +672,34 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::put('/teacher-documents/{teacher_document}', [TeacherDocumentController::class, 'update']);
         Route::patch('/teacher-documents/{teacher_document}', [TeacherDocumentController::class, 'update']);
         Route::delete('/teacher-documents/{teacher_document}', [TeacherDocumentController::class, 'destroy']);
+    });
+
+
+    // =========================
+    // NOTIFICATIONS
+    // =========================
+    Route::get('/notifications/my', [UserNotificationController::class, 'my']);
+    Route::get('/notifications', [UserNotificationController::class, 'index']);
+    Route::get('/notifications/{notification}', [UserNotificationController::class, 'show']);
+
+    Route::middleware('role:Admin,Administrator')->group(function () {
+        Route::post('/notifications', [UserNotificationController::class, 'store']);
+        Route::put('/notifications/{notification}', [UserNotificationController::class, 'update']);
+        Route::patch('/notifications/{notification}', [UserNotificationController::class, 'update']);
+        Route::delete('/notifications/{notification}', [UserNotificationController::class, 'destroy']);
+    });
+
+
+    // =========================
+    // CALENDARS (kalender akademik)
+    // =========================
+    Route::get('/calendars', [CalendarController::class, 'index']);
+    Route::get('/calendars/{calendar}', [CalendarController::class, 'show']);
+
+    Route::middleware('role:Admin,Administrator')->group(function () {
+        Route::post('/calendars', [CalendarController::class, 'store']);
+        Route::put('/calendars/{calendar}', [CalendarController::class, 'update']);
+        Route::patch('/calendars/{calendar}', [CalendarController::class, 'update']);
+        Route::delete('/calendars/{calendar}', [CalendarController::class, 'destroy']);
     });
 });
