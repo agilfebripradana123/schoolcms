@@ -60,6 +60,12 @@ use App\Http\Controllers\Api\BillingController;
 use App\Http\Controllers\Api\PaymentController;
 use App\Http\Controllers\Api\PaymentTransactionController;
 use App\Http\Controllers\Api\FinancialReportController;
+use App\Http\Controllers\Api\AcademicReportController;
+use App\Http\Controllers\Api\StudentReportController;
+use App\Http\Controllers\Api\TeacherReportController;
+use App\Http\Controllers\Api\FinanceReportController;
+use App\Http\Controllers\Api\AttendanceReportController;
+use App\Http\Controllers\Api\InventoryReportController;
 use App\Http\Controllers\Api\InventoryController;
 use App\Http\Controllers\Api\StockMovementController;
 
@@ -826,5 +832,21 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::put('/financial-reports/{financial_report}', [FinancialReportController::class, 'update']);
         Route::patch('/financial-reports/{financial_report}', [FinancialReportController::class, 'update']);
         Route::delete('/financial-reports/{financial_report}', [FinancialReportController::class, 'destroy']);
+    });
+
+
+    // =========================
+    // REPORTS (read-only agregasi)
+    // =========================
+    Route::prefix('reports')->group(function () {
+        Route::get('/academic/grades-summary', [AcademicReportController::class, 'gradesSummary']);
+        Route::get('/students/summary', [StudentReportController::class, 'summary']);
+        Route::get('/teachers/summary', [TeacherReportController::class, 'summary']);
+        Route::get('/teachers/attendance-summary', [TeacherReportController::class, 'attendanceSummary']);
+        Route::get('/finance/summary', [FinanceReportController::class, 'summary']);
+        Route::get('/attendance/daily', [AttendanceReportController::class, 'daily']);
+        Route::get('/attendance/student-summary', [AttendanceReportController::class, 'studentSummary']);
+        Route::get('/inventory/stock-summary', [InventoryReportController::class, 'stockSummary']);
+        Route::get('/inventory/movement-summary', [InventoryReportController::class, 'movementSummary']);
     });
 });
