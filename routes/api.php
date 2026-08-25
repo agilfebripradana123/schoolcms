@@ -36,6 +36,7 @@ use App\Http\Controllers\Api\AssignmentController;
 use App\Http\Controllers\Api\ReportCardController;
 use App\Http\Controllers\Api\AuditLogController;
 use App\Http\Controllers\Api\SettingController;
+use App\Http\Controllers\Api\AssetController;
 
 Route::post('/login', [AuthController::class, 'login']);
 
@@ -155,6 +156,20 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::put('/rooms/{room}', [RoomController::class, 'update']);
         Route::patch('/rooms/{room}', [RoomController::class, 'update']);
         Route::delete('/rooms/{room}', [RoomController::class, 'destroy']);
+    });
+
+
+    // =========================
+    // ASSETS
+    // =========================
+    Route::get('/assets', [AssetController::class, 'index']);
+    Route::get('/assets/{asset}', [AssetController::class, 'show']);
+
+    Route::middleware('role:Admin,Administrator')->group(function () {
+        Route::post('/assets', [AssetController::class, 'store']);
+        Route::put('/assets/{asset}', [AssetController::class, 'update']);
+        Route::patch('/assets/{asset}', [AssetController::class, 'update']);
+        Route::delete('/assets/{asset}', [AssetController::class, 'destroy']);
     });
 
 
