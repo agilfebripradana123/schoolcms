@@ -36,8 +36,20 @@ use App\Http\Controllers\Api\AssignmentController;
 use App\Http\Controllers\Api\ReportCardController;
 use App\Http\Controllers\Api\AuditLogController;
 use App\Http\Controllers\Api\SettingController;
+use App\Http\Controllers\Api\StudentParentController;
+use App\Http\Controllers\Api\GuardianController;
+use App\Http\Controllers\Api\StudentHistoryController;
+use App\Http\Controllers\Api\AchievementController;
+use App\Http\Controllers\Api\ViolationController;
+use App\Http\Controllers\Api\ScholarshipController;
+use App\Http\Controllers\Api\TransferController;
+use App\Http\Controllers\Api\AlumniController;
+use App\Http\Controllers\Api\StudentIdCardController;
+use App\Http\Controllers\Api\StaffController;
+use App\Http\Controllers\Api\TeacherAttendanceController;
+use App\Http\Controllers\Api\TeacherLeaveController;
+use App\Http\Controllers\Api\TeacherDocumentController;
 use App\Http\Controllers\Api\AssetController;
-use App\Http\Controllers\Api\MaintenanceController;
 
 Route::post('/login', [AuthController::class, 'login']);
 
@@ -601,5 +613,61 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::put('/student-id-cards/{student_id_card}', [StudentIdCardController::class, 'update']);
         Route::patch('/student-id-cards/{student_id_card}', [StudentIdCardController::class, 'update']);
         Route::delete('/student-id-cards/{student_id_card}', [StudentIdCardController::class, 'destroy']);
+    });
+
+
+    // =========================
+    // STAFF (tenaga kependidikan)
+    // =========================
+    Route::get('/staff', [StaffController::class, 'index']);
+    Route::get('/staff/{staff}', [StaffController::class, 'show']);
+
+    Route::middleware('role:Admin,Administrator')->group(function () {
+        Route::post('/staff', [StaffController::class, 'store']);
+        Route::put('/staff/{staff}', [StaffController::class, 'update']);
+        Route::patch('/staff/{staff}', [StaffController::class, 'update']);
+        Route::delete('/staff/{staff}', [StaffController::class, 'destroy']);
+    });
+
+
+    // =========================
+    // TEACHER ATTENDANCE (kehadiran guru)
+    // =========================
+    Route::get('/teacher-attendances', [TeacherAttendanceController::class, 'index']);
+    Route::get('/teacher-attendances/{teacher_attendance}', [TeacherAttendanceController::class, 'show']);
+
+    Route::middleware('role:Admin,Administrator')->group(function () {
+        Route::post('/teacher-attendances', [TeacherAttendanceController::class, 'store']);
+        Route::put('/teacher-attendances/{teacher_attendance}', [TeacherAttendanceController::class, 'update']);
+        Route::patch('/teacher-attendances/{teacher_attendance}', [TeacherAttendanceController::class, 'update']);
+        Route::delete('/teacher-attendances/{teacher_attendance}', [TeacherAttendanceController::class, 'destroy']);
+    });
+
+
+    // =========================
+    // TEACHER LEAVE (cuti guru)
+    // =========================
+    Route::get('/teacher-leaves', [TeacherLeaveController::class, 'index']);
+    Route::get('/teacher-leaves/{teacher_leave}', [TeacherLeaveController::class, 'show']);
+
+    Route::middleware('role:Admin,Administrator')->group(function () {
+        Route::post('/teacher-leaves', [TeacherLeaveController::class, 'store']);
+        Route::put('/teacher-leaves/{teacher_leave}', [TeacherLeaveController::class, 'update']);
+        Route::patch('/teacher-leaves/{teacher_leave}', [TeacherLeaveController::class, 'update']);
+        Route::delete('/teacher-leaves/{teacher_leave}', [TeacherLeaveController::class, 'destroy']);
+    });
+
+
+    // =========================
+    // TEACHER DOCUMENTS (dokumen guru)
+    // =========================
+    Route::get('/teacher-documents', [TeacherDocumentController::class, 'index']);
+    Route::get('/teacher-documents/{teacher_document}', [TeacherDocumentController::class, 'show']);
+
+    Route::middleware('role:Admin,Administrator')->group(function () {
+        Route::post('/teacher-documents', [TeacherDocumentController::class, 'store']);
+        Route::put('/teacher-documents/{teacher_document}', [TeacherDocumentController::class, 'update']);
+        Route::patch('/teacher-documents/{teacher_document}', [TeacherDocumentController::class, 'update']);
+        Route::delete('/teacher-documents/{teacher_document}', [TeacherDocumentController::class, 'destroy']);
     });
 });
