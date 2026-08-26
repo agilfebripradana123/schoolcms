@@ -70,7 +70,7 @@ return new class extends Migration
             $table->string('guardian_address', 200)->nullable()->after('guardian_phone');
 
             // Registration
-            $table->unsignedBigInteger('academic_year_id')->nullable()->after('guardian_address');
+            $table->unsignedInteger('academic_year_id')->nullable()->after('guardian_address');
             $table->enum('registration_path', ['prestasi', 'reguler', 'afirmasi', 'mutasi'])->nullable()->after('academic_year_id');
             $table->enum('program_choice', ['ipa', 'ips', 'bahasa', 'lainnya'])->nullable()->after('registration_path');
             $table->date('registration_date')->nullable()->after('program_choice');
@@ -78,7 +78,7 @@ return new class extends Migration
             // Verification
             $table->enum('verification_status', ['pending', 'verified', 'rejected'])->default('pending')->after('registration_date');
             $table->text('verification_notes')->nullable()->after('verification_status');
-            $table->unsignedBigInteger('verified_by')->nullable()->after('verification_notes');
+            $table->unsignedInteger('verified_by')->nullable()->after('verification_notes');
             $table->datetime('verified_at')->nullable()->after('verified_by');
 
             // Selection
@@ -91,7 +91,7 @@ return new class extends Migration
             $table->enum('re_registration_status', ['pending', 'completed', 'expired'])->default('pending')->after('selected_at');
             $table->datetime('re_registration_date')->nullable()->after('re_registration_status');
             $table->text('re_registration_notes')->nullable()->after('re_registration_date');
-            $table->unsignedBigInteger('re_registration_verified_by')->nullable()->after('re_registration_notes');
+            $table->unsignedInteger('re_registration_verified_by')->nullable()->after('re_registration_notes');
             $table->datetime('re_registration_verified_at')->nullable()->after('re_registration_verified_by');
 
             // Documents

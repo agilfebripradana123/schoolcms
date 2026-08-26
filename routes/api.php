@@ -76,7 +76,6 @@ use App\Http\Controllers\Api\RegistrationController;
 use App\Http\Controllers\Api\VerificationController;
 use App\Http\Controllers\Api\SelectionController;
 use App\Http\Controllers\Api\ReRegistrationController;
-use App\Http\Controllers\Api\DocumentController;
 
 Route::post('/login', [AuthController::class, 'login']);
 
