@@ -2,7 +2,7 @@
 
 namespace App\Exports;
 
-use App\Models\Teacher;
+use App\Models\Staff\Teacher;
 use Illuminate\Database\Eloquent\Builder;
 use Maatwebsite\Excel\Concerns\FromQuery;
 use Maatwebsite\Excel\Concerns\WithHeadings;

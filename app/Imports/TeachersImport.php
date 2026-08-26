@@ -2,7 +2,7 @@
 
 namespace App\Imports;
 
-use App\Models\Teacher;
+use App\Models\Staff\Teacher;
 use Illuminate\Support\Collection;
 use Maatwebsite\Excel\Concerns\ToCollection;
 use PhpOffice\PhpSpreadsheet\Shared\Date as SpreadsheetDate;

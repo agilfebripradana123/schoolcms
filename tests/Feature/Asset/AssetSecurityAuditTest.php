@@ -2,10 +2,10 @@
 
 namespace Tests\Feature\Asset;
 
-use App\Models\Asset;
-use App\Models\Role;
-use App\Models\Room;
-use App\Models\User;
+use App\Models\Facilities\Asset;
+use App\Models\System\Role;
+use App\Models\Facilities\Room;
+use App\Models\System\User;
 use Illuminate\Support\Facades\DB;
 use Laravel\Sanctum\Sanctum;
 use Tests\TestCase;

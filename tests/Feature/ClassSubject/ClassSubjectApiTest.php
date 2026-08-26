@@ -2,12 +2,12 @@
 
 namespace Tests\Feature\ClassSubject;
 
-use App\Models\ClassSubject;
-use App\Models\Role;
-use App\Models\SchoolClass;
-use App\Models\Subject;
-use App\Models\Teacher;
-use App\Models\User;
+use App\Models\Academic\ClassSubject;
+use App\Models\System\Role;
+use App\Models\Academic\SchoolClass;
+use App\Models\Academic\Subject;
+use App\Models\Staff\Teacher;
+use App\Models\System\User;
 use Illuminate\Support\Facades\DB;
 use Laravel\Sanctum\Sanctum;
 use Tests\TestCase;

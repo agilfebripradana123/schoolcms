@@ -2,9 +2,9 @@
 
 namespace Tests\Feature\Teacher;
 
-use App\Models\Role;
-use App\Models\Teacher;
-use App\Models\User;
+use App\Models\System\Role;
+use App\Models\Staff\Teacher;
+use App\Models\System\User;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\DB;
 use Laravel\Sanctum\Sanctum;

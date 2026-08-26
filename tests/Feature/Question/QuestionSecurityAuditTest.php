@@ -2,11 +2,11 @@
 
 namespace Tests\Feature\Question;
 
-use App\Models\QuestionBank;
-use App\Models\QuestionOption;
-use App\Models\Role;
-use App\Models\Subject;
-use App\Models\User;
+use App\Models\Examination\QuestionBank;
+use App\Models\Examination\QuestionOption;
+use App\Models\System\Role;
+use App\Models\Academic\Subject;
+use App\Models\System\User;
 use Illuminate\Support\Facades\DB;
 use Laravel\Sanctum\Sanctum;
 use Tests\TestCase;

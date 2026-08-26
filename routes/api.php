@@ -2,80 +2,81 @@
 
 use Illuminate\Support\Facades\Route;
 
-use App\Http\Controllers\Api\AuthController;
-use App\Http\Controllers\Api\ClassController;
-use App\Http\Controllers\Api\ClassSubjectController;
-use App\Http\Controllers\Api\GradeController;
-use App\Http\Controllers\Api\RoomController;
-use App\Http\Controllers\Api\TeacherController;
-use App\Http\Controllers\Api\StudentController;
-use App\Http\Controllers\Api\AnnouncementController;
-use App\Http\Controllers\Api\AttendanceController;
-use App\Http\Controllers\Api\SubjectController;
+use App\Http\Controllers\Api\System\AuthController;
+use App\Http\Controllers\Api\Academic\ClassController;
+use App\Http\Controllers\Api\Academic\ClassSubjectController;
+use App\Http\Controllers\Api\Academic\GradeController;
+use App\Http\Controllers\Api\Facilities\RoomController;
+use App\Http\Controllers\Api\Staff\TeacherController;
+use App\Http\Controllers\Api\Students\StudentController;
+use App\Http\Controllers\Api\Communication\AnnouncementController;
+use App\Http\Controllers\Api\Students\AttendanceController;
+use App\Http\Controllers\Api\Academic\SubjectController;
 
-use App\Http\Controllers\Api\RoleController;
-use App\Http\Controllers\Api\PermissionController;
-use App\Http\Controllers\Api\UserController;
+use App\Http\Controllers\Api\System\RoleController;
+use App\Http\Controllers\Api\System\PermissionController;
+use App\Http\Controllers\Api\System\UserController;
 
 
-use App\Http\Controllers\Api\ExamController;
-use App\Http\Controllers\Api\ExamSessionController;
-use App\Http\Controllers\Api\ExamScheduleController;
-use App\Http\Controllers\Api\ExamInstructionController;
-use App\Http\Controllers\Api\ExamParticipantController;
-use App\Http\Controllers\Api\ExamResultController;
-use App\Http\Controllers\Api\ExamAnswerController;
-use App\Http\Controllers\Api\AcademicYearController;
-use App\Http\Controllers\Api\SemesterController;
-use App\Http\Controllers\Api\CurriculumController;
-use App\Http\Controllers\Api\ClassStudentController;
-use App\Http\Controllers\Api\TeacherAssignmentController;
-use App\Http\Controllers\Api\ScheduleController;
-use App\Http\Controllers\Api\PeriodController;
-use App\Http\Controllers\Api\AssignmentController;
-use App\Http\Controllers\Api\ReportCardController;
-use App\Http\Controllers\Api\AuditLogController;
-use App\Http\Controllers\Api\SettingController;
-use App\Http\Controllers\Api\StudentParentController;
-use App\Http\Controllers\Api\GuardianController;
-use App\Http\Controllers\Api\StudentHistoryController;
-use App\Http\Controllers\Api\AchievementController;
-use App\Http\Controllers\Api\ViolationController;
-use App\Http\Controllers\Api\ScholarshipController;
-use App\Http\Controllers\Api\TransferController;
-use App\Http\Controllers\Api\AlumniController;
-use App\Http\Controllers\Api\StudentIdCardController;
-use App\Http\Controllers\Api\StaffController;
-use App\Http\Controllers\Api\TeacherAttendanceController;
-use App\Http\Controllers\Api\TeacherLeaveController;
-use App\Http\Controllers\Api\TeacherDocumentController;
-use App\Http\Controllers\Api\AssetController;
-use App\Http\Controllers\Api\MaintenanceController;
-use App\Http\Controllers\Api\UserNotificationController;
-use App\Http\Controllers\Api\CalendarController;
-use App\Http\Controllers\Api\CounselingController;
-use App\Http\Controllers\Api\ExtracurricularController;
-use App\Http\Controllers\Api\FeeTypeController;
-use App\Http\Controllers\Api\BillingController;
-use App\Http\Controllers\Api\PaymentController;
-use App\Http\Controllers\Api\PaymentTransactionController;
-use App\Http\Controllers\Api\FinancialReportController;
-use App\Http\Controllers\Api\AcademicReportController;
-use App\Http\Controllers\Api\StudentReportController;
-use App\Http\Controllers\Api\TeacherReportController;
-use App\Http\Controllers\Api\FinanceReportController;
-use App\Http\Controllers\Api\AttendanceReportController;
-use App\Http\Controllers\Api\InventoryReportController;
-use App\Http\Controllers\Api\IncomingLetterController;
-use App\Http\Controllers\Api\OutgoingLetterController;
-use App\Http\Controllers\Api\DocumentController;
-use App\Http\Controllers\Api\DispositionController;
-use App\Http\Controllers\Api\InventoryController;
-use App\Http\Controllers\Api\StockMovementController;
-use App\Http\Controllers\Api\RegistrationController;
-use App\Http\Controllers\Api\VerificationController;
-use App\Http\Controllers\Api\SelectionController;
-use App\Http\Controllers\Api\ReRegistrationController;
+use App\Http\Controllers\Api\Examination\ExamController;
+use App\Http\Controllers\Api\Examination\ExamSessionController;
+use App\Http\Controllers\Api\Examination\ExamScheduleController;
+use App\Http\Controllers\Api\Examination\ExamInstructionController;
+use App\Http\Controllers\Api\Examination\ExamParticipantController;
+use App\Http\Controllers\Api\Examination\ExamResultController;
+use App\Http\Controllers\Api\Examination\ExamAnswerController;
+use App\Http\Controllers\Api\Examination\QuestionController;
+use App\Http\Controllers\Api\Academic\AcademicYearController;
+use App\Http\Controllers\Api\Academic\SemesterController;
+use App\Http\Controllers\Api\Academic\CurriculumController;
+use App\Http\Controllers\Api\Academic\ClassStudentController;
+use App\Http\Controllers\Api\Staff\TeacherAssignmentController;
+use App\Http\Controllers\Api\Academic\ScheduleController;
+use App\Http\Controllers\Api\Academic\PeriodController;
+use App\Http\Controllers\Api\Academic\AssignmentController;
+use App\Http\Controllers\Api\Academic\ReportCardController;
+use App\Http\Controllers\Api\System\AuditLogController;
+use App\Http\Controllers\Api\System\SettingController;
+use App\Http\Controllers\Api\Students\StudentParentController;
+use App\Http\Controllers\Api\Students\GuardianController;
+use App\Http\Controllers\Api\Students\StudentHistoryController;
+use App\Http\Controllers\Api\Development\AchievementController;
+use App\Http\Controllers\Api\Development\ViolationController;
+use App\Http\Controllers\Api\Finance\ScholarshipController;
+use App\Http\Controllers\Api\Students\TransferController;
+use App\Http\Controllers\Api\Students\AlumniController;
+use App\Http\Controllers\Api\Students\StudentIdCardController;
+use App\Http\Controllers\Api\Staff\StaffController;
+use App\Http\Controllers\Api\Staff\TeacherAttendanceController;
+use App\Http\Controllers\Api\Staff\TeacherLeaveController;
+use App\Http\Controllers\Api\Staff\TeacherDocumentController;
+use App\Http\Controllers\Api\Facilities\AssetController;
+use App\Http\Controllers\Api\Facilities\MaintenanceController;
+use App\Http\Controllers\Api\Communication\UserNotificationController;
+use App\Http\Controllers\Api\Communication\CalendarController;
+use App\Http\Controllers\Api\Development\CounselingController;
+use App\Http\Controllers\Api\Development\ExtracurricularController;
+use App\Http\Controllers\Api\Finance\FeeTypeController;
+use App\Http\Controllers\Api\Finance\BillingController;
+use App\Http\Controllers\Api\Finance\PaymentController;
+use App\Http\Controllers\Api\Finance\PaymentTransactionController;
+use App\Http\Controllers\Api\Finance\FinancialReportController;
+use App\Http\Controllers\Api\Reports\AcademicReportController;
+use App\Http\Controllers\Api\Reports\StudentReportController;
+use App\Http\Controllers\Api\Reports\TeacherReportController;
+use App\Http\Controllers\Api\Reports\FinanceReportController;
+use App\Http\Controllers\Api\Reports\AttendanceReportController;
+use App\Http\Controllers\Api\Reports\InventoryReportController;
+use App\Http\Controllers\Api\Administration\IncomingLetterController;
+use App\Http\Controllers\Api\Administration\OutgoingLetterController;
+use App\Http\Controllers\Api\Administration\DocumentController;
+use App\Http\Controllers\Api\Administration\DispositionController;
+use App\Http\Controllers\Api\Facilities\InventoryController;
+use App\Http\Controllers\Api\Facilities\StockMovementController;
+use App\Http\Controllers\Api\PPDB\RegistrationController;
+use App\Http\Controllers\Api\PPDB\VerificationController;
+use App\Http\Controllers\Api\PPDB\SelectionController;
+use App\Http\Controllers\Api\PPDB\ReRegistrationController;
 
 Route::post('/login', [AuthController::class, 'login']);
 
@@ -299,6 +300,20 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::put('/exams/{exam}', [ExamController::class, 'update']);
         Route::patch('/exams/{exam}', [ExamController::class, 'update']);
         Route::delete('/exams/{exam}', [ExamController::class, 'destroy']);
+    });
+
+
+    // =========================
+    // QUESTION BANKS
+    // =========================
+    Route::get('/questions', [QuestionController::class, 'index']);
+    Route::get('/questions/{id}', [QuestionController::class, 'show']);
+
+    Route::middleware('role:Admin,Administrator')->group(function () {
+        Route::post('/questions', [QuestionController::class, 'store']);
+        Route::put('/questions/{id}', [QuestionController::class, 'update']);
+        Route::patch('/questions/{id}', [QuestionController::class, 'update']);
+        Route::delete('/questions/{id}', [QuestionController::class, 'destroy']);
     });
 
 
@@ -924,20 +939,6 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::put('/outgoing-letters/{outgoing_letter}', [OutgoingLetterController::class, 'update']);
         Route::patch('/outgoing-letters/{outgoing_letter}', [OutgoingLetterController::class, 'update']);
         Route::delete('/outgoing-letters/{outgoing_letter}', [OutgoingLetterController::class, 'destroy']);
-    });
-
-
-    // =========================
-    // DOCUMENTS (dokumen arsip)
-    // =========================
-    Route::get('/documents', [DocumentController::class, 'index']);
-    Route::get('/documents/{document}', [DocumentController::class, 'show']);
-
-    Route::middleware('role:Admin,Administrator')->group(function () {
-        Route::post('/documents', [DocumentController::class, 'store']);
-        Route::put('/documents/{document}', [DocumentController::class, 'update']);
-        Route::patch('/documents/{document}', [DocumentController::class, 'update']);
-        Route::delete('/documents/{document}', [DocumentController::class, 'destroy']);
     });
 
 

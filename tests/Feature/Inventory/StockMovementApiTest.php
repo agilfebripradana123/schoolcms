@@ -2,10 +2,10 @@
 
 namespace Tests\Feature\Inventory;
 
-use App\Models\Inventory;
-use App\Models\Role;
-use App\Models\StockMovement;
-use App\Models\User;
+use App\Models\Facilities\Inventory;
+use App\Models\System\Role;
+use App\Models\Facilities\StockMovement;
+use App\Models\System\User;
 use Illuminate\Support\Facades\DB;
 use Laravel\Sanctum\Sanctum;
 use Tests\TestCase;

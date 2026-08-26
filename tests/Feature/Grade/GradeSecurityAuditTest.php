@@ -2,13 +2,13 @@
 
 namespace Tests\Feature\Grade;
 
-use App\Models\ClassSubject;
-use App\Models\Grade;
-use App\Models\Role;
-use App\Models\SchoolClass;
-use App\Models\Student;
-use App\Models\Subject;
-use App\Models\User;
+use App\Models\Academic\ClassSubject;
+use App\Models\Academic\Grade;
+use App\Models\System\Role;
+use App\Models\Academic\SchoolClass;
+use App\Models\Students\Student;
+use App\Models\Academic\Subject;
+use App\Models\System\User;
 use Illuminate\Support\Facades\DB;
 use Laravel\Sanctum\Sanctum;
 use Tests\TestCase;

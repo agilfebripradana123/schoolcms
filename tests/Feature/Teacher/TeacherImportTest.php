@@ -2,9 +2,9 @@
 
 namespace Tests\Feature\Teacher;
 
-use App\Models\Role;
-use App\Models\Teacher;
-use App\Models\User;
+use App\Models\System\Role;
+use App\Models\Staff\Teacher;
+use App\Models\System\User;
 use Illuminate\Http\UploadedFile;
 use Laravel\Sanctum\Sanctum;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;

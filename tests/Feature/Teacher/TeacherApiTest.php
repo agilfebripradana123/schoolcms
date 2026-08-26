@@ -2,10 +2,10 @@
 
 namespace Tests\Feature\Teacher;
 
-use App\Models\Role;
-use App\Models\SchoolClass;
-use App\Models\Teacher;
-use App\Models\User;
+use App\Models\System\Role;
+use App\Models\Academic\SchoolClass;
+use App\Models\Staff\Teacher;
+use App\Models\System\User;
 use Illuminate\Support\Facades\Route;
 use Laravel\Sanctum\Sanctum;
 use Tests\TestCase;

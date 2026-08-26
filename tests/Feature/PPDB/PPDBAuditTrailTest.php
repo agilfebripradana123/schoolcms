@@ -2,11 +2,11 @@
 
 namespace Tests\Feature\PPDB;
 
-use App\Models\AuditLog;
-use App\Models\Registrant;
-use App\Models\Role;
-use App\Models\Student;
-use App\Models\User;
+use App\Models\System\AuditLog;
+use App\Models\PPDB\Registrant;
+use App\Models\System\Role;
+use App\Models\Students\Student;
+use App\Models\System\User;
 use Illuminate\Support\Facades\DB;
 use Laravel\Sanctum\Sanctum;
 use Tests\TestCase;

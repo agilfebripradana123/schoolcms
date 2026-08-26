@@ -2,11 +2,11 @@
 
 namespace Tests\Feature\PPDB;
 
-use App\Models\AcademicYear;
-use App\Models\Registrant;
-use App\Models\Role;
-use App\Models\Student;
-use App\Models\User;
+use App\Models\Academic\AcademicYear;
+use App\Models\PPDB\Registrant;
+use App\Models\System\Role;
+use App\Models\Students\Student;
+use App\Models\System\User;
 use Illuminate\Support\Facades\DB;
 use Laravel\Sanctum\Sanctum;
 use Tests\TestCase;

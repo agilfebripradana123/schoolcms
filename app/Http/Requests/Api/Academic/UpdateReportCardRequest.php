@@ -1,0 +1,75 @@
+<?php
+
+namespace App\Http\Requests\Api\Academic;
+
+use Illuminate\Contracts\Validation\Validator;
+use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Http\Exceptions\HttpResponseException;
+use Illuminate\Validation\Rule;
+
+class UpdateReportCardRequest extends FormRequest
+{
+    public function authorize(): bool
+    {
+        return true;
+    }
+
+    public function rules(): array
+    {
+        return [
+            'student_id' => [
+                'sometimes',
+                'required',
+                'integer',
+                Rule::exists('students', 'id')->whereNull('deleted_at'),
+                Rule::unique('report_cards')->where(fn ($q) => $q
+                    ->where('student_id', $this->input('student_id'))
+                    ->where('class_id', $this->input('class_id'))
+                    ->where('academic_year_id', $this->input('academic_year_id'))
+                    ->where('semester_id', $this->input('semester_id')))
+                    ->ignore($this->route('report_card')),
+            ],
+            'class_id' => [
+                'sometimes',
+                'required',
+                'integer',
+                Rule::exists('classes', 'id'),
+            ],
+            'academic_year_id' => [
+                'sometimes',
+                'required',
+                'integer',
+                Rule::exists('academic_years', 'id'),
+            ],
+            'semester_id' => [
+                'sometimes',
+                'required',
+                'integer',
+                Rule::exists('semesters', 'id'),
+            ],
+            'teacher_notes' => [
+                'nullable',
+                'string',
+            ],
+            'status' => [
+                'sometimes',
+                'required',
+                'string',
+                Rule::in(['draft', 'published']),
+            ],
+            'published_at' => [
+                'nullable',
+                'date',
+            ],
+        ];
+    }
+
+    protected function failedValidation(Validator $validator): void
+    {
+        throw new HttpResponseException(response()->json([
+            'success' => false,
+            'message' => 'Validation failed',
+            'errors' => $validator->errors(),
+        ], 422));
+    }
+}

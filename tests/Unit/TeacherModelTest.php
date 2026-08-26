@@ -2,7 +2,7 @@
 
 namespace Tests\Unit;
 
-use App\Models\Teacher;
+use App\Models\Staff\Teacher;
 use PHPUnit\Framework\TestCase;
 
 class TeacherModelTest extends TestCase
