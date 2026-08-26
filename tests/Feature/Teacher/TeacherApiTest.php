@@ -1669,6 +1669,7 @@ class TeacherApiTest extends TestCase
 
         $countBefore = $this->app['db']->connection('mysql')
             ->table('teachers')
+            ->whereNull('deleted_at')
             ->count();
 
         $teacher = $this->createTestTeacher();
