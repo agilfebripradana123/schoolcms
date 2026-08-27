@@ -8,6 +8,7 @@ use App\Http\Requests\Api\Academic\UpdateSemesterRequest;
 use App\Http\Resources\Academic\SemesterResource;
 use App\Models\Academic\Semester;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\DB;
 
 class SemesterController extends Controller
 {
@@ -59,7 +60,25 @@ class SemesterController extends Controller
 
     public function store(StoreSemesterRequest $request): JsonResponse
     {
-        $semester = Semester::create($request->validated());
+        $validated = $request->validated();
+
+        $semester = DB::connection('mysql')->transaction(function () use ($validated) {
+            $activate = (bool) ($validated['is_active'] ?? false);
+
+            if ($activate) {
+                Semester::query()
+                    ->where('academic_year_id', $validated['academic_year_id'])
+                    ->update(['is_active' => false]);
+            }
+
+            $record = Semester::create($validated);
+
+            if ($activate) {
+                $record->update(['is_active' => true]);
+            }
+
+            return $record;
+        });
 
         return response()->json([
             'success' => true,
@@ -80,7 +99,22 @@ class SemesterController extends Controller
             ], 404);
         }
 
-        $semester->update($request->validated());
+        $validated = $request->validated();
+
+        DB::connection('mysql')->transaction(function () use ($semester, $validated) {
+            $academicYearId = $validated['academic_year_id'] ?? $semester->academic_year_id;
+            $activate = array_key_exists('is_active', $validated)
+                && (bool) $validated['is_active'];
+
+            if ($activate) {
+                Semester::query()
+                    ->where('academic_year_id', $academicYearId)
+                    ->where('id', '!=', $semester->id)
+                    ->update(['is_active' => false]);
+            }
+
+            $semester->update($validated);
+        });
 
         return response()->json([
             'success' => true,

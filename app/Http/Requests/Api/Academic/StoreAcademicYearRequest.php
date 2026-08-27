@@ -23,6 +23,14 @@ class StoreAcademicYearRequest extends FormRequest
                 'max:20',
                 Rule::unique('academic_years', 'name'),
             ],
+            'start_date' => [
+                'nullable',
+                'date',
+            ],
+            'end_date' => [
+                'nullable',
+                'date',
+            ],
             'is_active' => [
                 'boolean',
             ],

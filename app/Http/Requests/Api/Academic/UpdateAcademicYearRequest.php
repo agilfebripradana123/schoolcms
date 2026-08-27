@@ -25,6 +25,16 @@ class UpdateAcademicYearRequest extends FormRequest
                 Rule::unique('academic_years', 'name')
                     ->ignore($this->route('academic_year')),
             ],
+            'start_date' => [
+                'sometimes',
+                'nullable',
+                'date',
+            ],
+            'end_date' => [
+                'sometimes',
+                'nullable',
+                'date',
+            ],
             'is_active' => [
                 'sometimes',
                 'boolean',

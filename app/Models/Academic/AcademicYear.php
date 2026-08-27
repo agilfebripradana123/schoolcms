@@ -2,11 +2,11 @@
 
 namespace App\Models\Academic;
 
+use App\Models\PPDB\Registrant;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-use App\Models\PPDB\Registrant;
 class AcademicYear extends Model
 {
     use SoftDeletes;
@@ -35,5 +35,10 @@ class AcademicYear extends Model
     public function registrants(): HasMany
     {
         return $this->hasMany(Registrant::class);
+    }
+
+    public function semesters(): HasMany
+    {
+        return $this->hasMany(Semester::class, 'academic_year_id');
     }
 }
