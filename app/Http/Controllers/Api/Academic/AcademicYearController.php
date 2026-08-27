@@ -8,6 +8,7 @@ use App\Http\Requests\Api\Academic\UpdateAcademicYearRequest;
 use App\Http\Resources\Academic\AcademicYearResource;
 use App\Models\Academic\AcademicYear;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\DB;
 
 class AcademicYearController extends Controller
 {
@@ -60,7 +61,23 @@ class AcademicYearController extends Controller
 
     public function store(StoreAcademicYearRequest $request): JsonResponse
     {
-        $academicYear = AcademicYear::create($request->validated());
+        $validated = $request->validated();
+
+        $academicYear = DB::connection('mysql')->transaction(function () use ($validated) {
+            $activate = (bool) ($validated['is_active'] ?? false);
+
+            if ($activate) {
+                AcademicYear::query()->update(['is_active' => false]);
+            }
+
+            $record = AcademicYear::create($validated);
+
+            if ($activate) {
+                $record->update(['is_active' => true]);
+            }
+
+            return $record;
+        });
 
         return response()->json([
             'success' => true,
@@ -81,12 +98,25 @@ class AcademicYearController extends Controller
             ], 404);
         }
 
-        $academicYear->update($request->validated());
+        $validated = $request->validated();
+
+        DB::connection('mysql')->transaction(function () use ($academicYear, $validated) {
+            $activate = array_key_exists('is_active', $validated)
+                && (bool) $validated['is_active'];
+
+            if ($activate) {
+                AcademicYear::query()
+                    ->where('id', '!=', $academicYear->id)
+                    ->update(['is_active' => false]);
+            }
+
+            $academicYear->update($validated);
+        });
 
         return response()->json([
             'success' => true,
             'message' => 'Academic year updated successfully',
-            'data' => new AcademicYearResource($academicYear),
+            'data' => new AcademicYearResource($academicYear->refresh()),
         ]);
     }
 
