@@ -15,7 +15,8 @@ class AttendanceController extends Controller
      */
     public function index()
     {
-        $attendances = Attendance::latest('date')
+        $attendances = Attendance::with(['student', 'schoolClass'])
+            ->latest('date')
             ->latest('id')
             ->get();
 
@@ -45,7 +46,7 @@ class AttendanceController extends Controller
      */
     public function show($id)
     {
-        $attendance = Attendance::find($id);
+        $attendance = Attendance::with(['student', 'schoolClass'])->find($id);
 
         if (!$attendance) {
             return response()->json([
@@ -67,7 +68,7 @@ class AttendanceController extends Controller
      */
     public function update(UpdateAttendanceRequest $request, $id)
     {
-        $attendance = Attendance::find($id);
+        $attendance = Attendance::with(['student', 'schoolClass'])->find($id);
 
         if (!$attendance) {
             return response()->json([
