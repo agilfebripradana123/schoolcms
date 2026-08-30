@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests\Api\Finance;
 
+use App\Models\Finance\Billing;
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Exceptions\HttpResponseException;
@@ -22,11 +23,7 @@ class UpdateBillingRequest extends FormRequest
                 'required',
                 'integer',
                 Rule::exists('students', 'id')->whereNull('deleted_at'),
-                Rule::unique('billings')->where(
-                    fn ($q) => $q->where('student_id', $this->input('student_id'))
-                        ->where('fee_type_id', $this->input('fee_type_id'))
-                        ->where('academic_year_id', $this->input('academic_year_id'))
-                )->ignore($this->route('billing')),
+                $this->duplicateActiveBillingRule(),
             ],
             'fee_type_id' => [
                 'sometimes',
@@ -41,6 +38,7 @@ class UpdateBillingRequest extends FormRequest
                 Rule::exists('academic_years', 'id'),
             ],
             'semester_id' => [
+                'sometimes',
                 'nullable',
                 'integer',
                 Rule::exists('semesters', 'id'),
@@ -52,21 +50,79 @@ class UpdateBillingRequest extends FormRequest
                 'min:0',
             ],
             'due_date' => [
+                'sometimes',
                 'nullable',
                 'date',
             ],
+            'period_start' => [
+                'sometimes',
+                'nullable',
+                'date',
+            ],
+            'period_end' => [
+                'sometimes',
+                'nullable',
+                'date',
+                Rule::when($this->filled('period_start'), ['after_or_equal:period_start']),
+            ],
             'status' => [
                 'sometimes',
-                'required',
                 'string',
                 Rule::in(['unpaid', 'partial', 'paid', 'cancelled']),
             ],
             'notes' => [
+                'sometimes',
                 'nullable',
                 'string',
                 'max:255',
             ],
         ];
+    }
+
+    /**
+     * Application-level guard mirroring the Phase 1 `billings.uniq_key`
+     * protection: the business identity is
+     * (student_id, fee_type_id, period_start, period_end) and only
+     * non-cancelled billings participate.
+     */
+    private function duplicateActiveBillingRule(): \Closure
+    {
+        return function ($attribute, $value, $fail) {
+            if ($this->input('fee_type_id') === null) {
+                return;
+            }
+
+            $currentId = $this->route('billing');
+
+            $query = Billing::query()
+                ->where('student_id', $value)
+                ->where('fee_type_id', $this->input('fee_type_id'))
+                ->where('status', '!=', 'cancelled')
+                ->when($currentId !== null, fn ($q) => $q->where('id', '!=', $currentId));
+
+            $this->applyPeriodEquality($query, 'period_start');
+            $this->applyPeriodEquality($query, 'period_end');
+
+            if ($query->exists()) {
+                $fail('The student already has an active billing for this fee type and period.');
+            }
+        };
+    }
+
+    private function applyPeriodEquality($query, string $field): void
+    {
+        $value = $this->normalizeNullableDate($this->input($field));
+
+        if ($value === null) {
+            $query->whereNull($field);
+        } else {
+            $query->where($field, $value);
+        }
+    }
+
+    private function normalizeNullableDate(mixed $value): ?string
+    {
+        return ($value === null || $value === '') ? null : $value;
     }
 
     protected function failedValidation(Validator $validator): void

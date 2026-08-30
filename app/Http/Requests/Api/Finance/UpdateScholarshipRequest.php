@@ -30,22 +30,27 @@ class UpdateScholarshipRequest extends FormRequest
                 'max:150',
             ],
             'provider' => [
+                'sometimes',
                 'nullable',
                 'string',
                 'max:150',
             ],
             'amount' => [
+                'sometimes',
                 'nullable',
                 'numeric',
                 'min:0',
             ],
             'start_date' => [
+                'sometimes',
                 'nullable',
                 'date',
             ],
             'end_date' => [
+                'sometimes',
                 'nullable',
                 'date',
+                Rule::when($this->filled('start_date'), ['after_or_equal:start_date']),
             ],
             'status' => [
                 'sometimes',

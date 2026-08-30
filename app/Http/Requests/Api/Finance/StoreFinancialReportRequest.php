@@ -36,21 +36,6 @@ class StoreFinancialReportRequest extends FormRequest
                 'date',
                 'after_or_equal:period_start',
             ],
-            'total_billed' => [
-                'nullable',
-                'numeric',
-                'min:0',
-            ],
-            'total_paid' => [
-                'nullable',
-                'numeric',
-                'min:0',
-            ],
-            'total_outstanding' => [
-                'nullable',
-                'numeric',
-                'min:0',
-            ],
             'generated_by' => [
                 'nullable',
                 'integer',

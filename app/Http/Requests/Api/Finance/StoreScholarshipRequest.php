@@ -44,6 +44,7 @@ class StoreScholarshipRequest extends FormRequest
             'end_date' => [
                 'nullable',
                 'date',
+                Rule::when($this->filled('start_date'), ['after_or_equal:start_date']),
             ],
             'status' => [
                 'required',
