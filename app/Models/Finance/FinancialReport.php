@@ -2,10 +2,10 @@
 
 namespace App\Models\Finance;
 
+use App\Models\System\User;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-use App\Models\System\User;
 class FinancialReport extends Model
 {
     protected $table = 'financial_reports';
@@ -18,6 +18,7 @@ class FinancialReport extends Model
         'total_billed',
         'total_paid',
         'total_outstanding',
+        'source_fingerprint',
         'generated_by',
         'notes',
     ];

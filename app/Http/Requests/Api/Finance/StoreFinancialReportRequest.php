@@ -36,11 +36,6 @@ class StoreFinancialReportRequest extends FormRequest
                 'date',
                 'after_or_equal:period_start',
             ],
-            'generated_by' => [
-                'nullable',
-                'integer',
-                Rule::exists('users', 'id'),
-            ],
             'notes' => [
                 'nullable',
                 'string',

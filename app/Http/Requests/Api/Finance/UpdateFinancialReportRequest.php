@@ -40,12 +40,6 @@ class UpdateFinancialReportRequest extends FormRequest
                 'date',
                 Rule::when($this->filled('period_start'), ['after_or_equal:period_start']),
             ],
-            'generated_by' => [
-                'sometimes',
-                'nullable',
-                'integer',
-                Rule::exists('users', 'id'),
-            ],
             'notes' => [
                 'sometimes',
                 'nullable',
