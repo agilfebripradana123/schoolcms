@@ -3,6 +3,7 @@
 namespace App\Http\Requests\Api\Finance;
 
 use App\Models\Finance\Billing;
+use Carbon\Carbon;
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Exceptions\HttpResponseException;
@@ -92,6 +93,15 @@ class UpdateBillingRequest extends FormRequest
                 return;
             }
 
+            $periodStart = $this->normalizeDate($this->input('period_start'));
+            $periodEnd = $this->normalizeDate($this->input('period_end'));
+
+            // Unparseable date input is left to the date rules — never let it
+            // reach the DB comparison (MySQL would reject it as a 500).
+            if ($periodStart === false || $periodEnd === false) {
+                return;
+            }
+
             $currentId = $this->route('billing');
 
             $query = Billing::query()
@@ -100,8 +110,8 @@ class UpdateBillingRequest extends FormRequest
                 ->where('status', '!=', 'cancelled')
                 ->when($currentId !== null, fn ($q) => $q->where('id', '!=', $currentId));
 
-            $this->applyPeriodEquality($query, 'period_start');
-            $this->applyPeriodEquality($query, 'period_end');
+            $this->applyPeriodEquality($query, 'period_start', $periodStart);
+            $this->applyPeriodEquality($query, 'period_end', $periodEnd);
 
             if ($query->exists()) {
                 $fail('The student already has an active billing for this fee type and period.');
@@ -109,10 +119,8 @@ class UpdateBillingRequest extends FormRequest
         };
     }
 
-    private function applyPeriodEquality($query, string $field): void
+    private function applyPeriodEquality($query, string $field, ?string $value): void
     {
-        $value = $this->normalizeNullableDate($this->input($field));
-
         if ($value === null) {
             $query->whereNull($field);
         } else {
@@ -120,9 +128,20 @@ class UpdateBillingRequest extends FormRequest
         }
     }
 
-    private function normalizeNullableDate(mixed $value): ?string
+    /**
+     * @return null|false|string Y-m-d when parseable, null when absent/empty, false when invalid.
+     */
+    private function normalizeDate(mixed $value): string|false|null
     {
-        return ($value === null || $value === '') ? null : $value;
+        if ($value === null || $value === '') {
+            return null;
+        }
+
+        try {
+            return Carbon::parse($value)->toDateString();
+        } catch (\Throwable) {
+            return false;
+        }
     }
 
     protected function failedValidation(Validator $validator): void
