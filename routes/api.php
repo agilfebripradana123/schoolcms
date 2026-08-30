@@ -13,6 +13,12 @@ use App\Http\Controllers\Api\Communication\AnnouncementController;
 use App\Http\Controllers\Api\Students\AttendanceController;
 use App\Http\Controllers\Api\Academic\SubjectController;
 
+use App\Http\Controllers\Api\Students\StudentProfileController;
+use App\Http\Controllers\Api\Students\Finance\StudentBillingController;
+use App\Http\Controllers\Api\Students\Finance\StudentFinanceSummaryController;
+use App\Http\Controllers\Api\Students\Finance\StudentPaymentController;
+use App\Http\Controllers\Api\Students\Finance\StudentScholarshipController;
+use App\Http\Controllers\Api\Students\Finance\StudentTransactionController;
 use App\Http\Controllers\Api\System\RoleController;
 use App\Http\Controllers\Api\System\PermissionController;
 use App\Http\Controllers\Api\System\UserController;
@@ -967,5 +973,28 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::put('/dispositions/{disposition}', [DispositionController::class, 'update']);
         Route::patch('/dispositions/{disposition}', [DispositionController::class, 'update']);
         Route::delete('/dispositions/{disposition}', [DispositionController::class, 'destroy']);
+    });
+
+
+    // =========================
+    // STUDENT PORTAL — Phase 8 identity foundation only.
+    // Authorization is forced from the authenticated, linked Student.
+    // Finance endpoints are added in a later phase.
+    // =========================
+    Route::prefix('student')->middleware('student')->group(function () {
+        Route::get('/profile', [StudentProfileController::class, 'show']);
+
+        // Phase 9 — Student Finance API (read-only, identity scoped).
+        Route::prefix('finance')->group(function () {
+            Route::get('/summary', [StudentFinanceSummaryController::class, 'summary']);
+            Route::get('/billings', [StudentBillingController::class, 'index']);
+            Route::get('/billings/{billing}', [StudentBillingController::class, 'show']);
+            Route::get('/payments', [StudentPaymentController::class, 'index']);
+            Route::get('/payments/{payment}', [StudentPaymentController::class, 'show']);
+            Route::get('/transactions', [StudentTransactionController::class, 'index']);
+            Route::get('/transactions/{transaction}', [StudentTransactionController::class, 'show']);
+            Route::get('/scholarships', [StudentScholarshipController::class, 'index']);
+            Route::get('/scholarships/{scholarship}', [StudentScholarshipController::class, 'show']);
+        });
     });
 });

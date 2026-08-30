@@ -7,11 +7,13 @@ use App\Http\Requests\Api\Finance\StorePaymentTransactionRequest;
 use App\Http\Requests\Api\Finance\UpdatePaymentTransactionRequest;
 use App\Http\Resources\Finance\PaymentTransactionResource;
 use App\Models\Finance\PaymentTransaction;
+use App\Services\Finance\PaymentTransactionService;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 
 class PaymentTransactionController extends Controller
 {
-    public function index(\Illuminate\Http\Request $request): JsonResponse
+    public function index(Request $request): JsonResponse
     {
         $query = PaymentTransaction::query()->with('payment');
 
@@ -46,7 +48,7 @@ class PaymentTransactionController extends Controller
     {
         $transaction = PaymentTransaction::with('payment')->find($id);
 
-        if (!$transaction) {
+        if (! $transaction) {
             return response()->json([
                 'success' => false,
                 'message' => 'Payment transaction not found',
@@ -61,9 +63,9 @@ class PaymentTransactionController extends Controller
         ]);
     }
 
-    public function store(StorePaymentTransactionRequest $request): JsonResponse
+    public function store(StorePaymentTransactionRequest $request, PaymentTransactionService $transactionService): JsonResponse
     {
-        $transaction = PaymentTransaction::create($request->validated());
+        $transaction = $transactionService->create($request->validated());
         $transaction->load('payment');
 
         return response()->json([
@@ -73,11 +75,11 @@ class PaymentTransactionController extends Controller
         ], 201);
     }
 
-    public function update(UpdatePaymentTransactionRequest $request, int $id): JsonResponse
+    public function update(UpdatePaymentTransactionRequest $request, int $id, PaymentTransactionService $transactionService): JsonResponse
     {
         $transaction = PaymentTransaction::find($id);
 
-        if (!$transaction) {
+        if (! $transaction) {
             return response()->json([
                 'success' => false,
                 'message' => 'Payment transaction not found',
@@ -85,8 +87,7 @@ class PaymentTransactionController extends Controller
             ], 404);
         }
 
-        $transaction->update($request->validated());
-        $transaction->load('payment');
+        $transaction = $transactionService->update($transaction, $request->validated());
 
         return response()->json([
             'success' => true,
@@ -95,11 +96,11 @@ class PaymentTransactionController extends Controller
         ]);
     }
 
-    public function destroy(int $id): JsonResponse
+    public function destroy(int $id, PaymentTransactionService $transactionService): JsonResponse
     {
         $transaction = PaymentTransaction::find($id);
 
-        if (!$transaction) {
+        if (! $transaction) {
             return response()->json([
                 'success' => false,
                 'message' => 'Payment transaction not found',
@@ -107,7 +108,7 @@ class PaymentTransactionController extends Controller
             ], 404);
         }
 
-        $transaction->delete();
+        $transactionService->delete($transaction);
 
         return response()->json([
             'success' => true,

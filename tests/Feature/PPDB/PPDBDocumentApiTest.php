@@ -3,8 +3,8 @@
 namespace Tests\Feature\PPDB;
 
 use App\Models\PPDB\Registrant;
-use App\Models\System\Role;
 use App\Models\Students\Student;
+use App\Models\System\Role;
 use App\Models\System\User;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\DB;
@@ -69,9 +69,18 @@ class PPDBDocumentApiTest extends TestCase
 
     private function authenticateAsSiswa(): User
     {
-        $siswaRole = Role::where('name', 'Siswa')->first();
-        $user = User::where('role_id', $siswaRole->id)->first();
+        // A fresh Siswa account per test so the user ↔ student link stays 1:1
+        // (students.user_id is UNIQUE since Phase 8).
+        $user = User::create([
+            'username' => 'ppdbsiswa_'.mt_rand(100000, 999999),
+            'name' => 'Siswa Test '.mt_rand(1000, 9999),
+            'email' => 'ppdbsiswa.'.mt_rand(100000, 999999).'@test.local',
+            'password' => 'password',
+            'is_active' => true,
+            'role_id' => (int) Role::where('name', 'Siswa')->value('id'),
+        ]);
         Sanctum::actingAs($user);
+
         return $user;
     }
 
@@ -81,7 +90,7 @@ class PPDBDocumentApiTest extends TestCase
             'user_id' => $user->id,
             'nisn' => str_pad(mt_rand(1000000000, 9999999999), 10, '0', STR_PAD_LEFT),
             'nis' => str_pad(mt_rand(100000, 999999), 6, '0', STR_PAD_LEFT),
-            'name' => 'Siswa ' . $user->name,
+            'name' => 'Siswa '.$user->name,
             'gender' => 'L',
             'birth_place' => 'Jakarta',
             'birth_date' => '2008-01-01',
@@ -92,9 +101,9 @@ class PPDBDocumentApiTest extends TestCase
     private function createTestRegistration(array $overrides = []): Registrant
     {
         $defaults = [
-            'registration_number' => 'DOC-TEST-' . str_pad(mt_rand(100, 999), 3, '0', STR_PAD_LEFT),
-            'full_name' => 'Doc Test ' . mt_rand(100, 999),
-            'email' => 'doc.' . mt_rand(100000, 999999) . '@test.local',
+            'registration_number' => 'DOC-TEST-'.str_pad(mt_rand(100, 999), 3, '0', STR_PAD_LEFT),
+            'full_name' => 'Doc Test '.mt_rand(100, 999),
+            'email' => 'doc.'.mt_rand(100000, 999999).'@test.local',
             'gender' => 'L',
             'status' => 'draft',
             'verification_status' => 'pending',
@@ -108,6 +117,10 @@ class PPDBDocumentApiTest extends TestCase
     private function cleanupTestData(): void
     {
         DB::connection('mysql')->statement('DELETE FROM registrants WHERE registration_number LIKE "DOC-TEST-%"');
+
+        $siswaIds = DB::connection('mysql')->table('users')->where('username', 'like', 'ppdbsiswa_%')->pluck('id');
+        DB::connection('mysql')->table('students')->whereIn('user_id', $siswaIds)->delete();
+        DB::connection('mysql')->table('users')->whereIn('id', $siswaIds)->delete();
     }
 
     // ─── Metadata Tests ────────────────────────────────────────
