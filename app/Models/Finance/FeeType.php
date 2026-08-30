@@ -3,6 +3,7 @@
 namespace App\Models\Finance;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class FeeType extends Model
 {
@@ -23,5 +24,10 @@ class FeeType extends Model
             'created_at' => 'datetime',
             'updated_at' => 'datetime',
         ];
+    }
+
+    public function billings(): HasMany
+    {
+        return $this->hasMany(Billing::class);
     }
 }
