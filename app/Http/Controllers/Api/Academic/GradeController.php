@@ -92,7 +92,7 @@ class GradeController extends Controller
     {
         $validated = $request->validated();
 
-        $grade = DB::connection('mysql')->transaction(function () use ($validated) {
+        $grade = DB::transaction(function () use ($validated) {
             $exists = Grade::where('student_id', $validated['student_id'])
                 ->where('subject_id', $validated['subject_id'])
                 ->where('class_id', $validated['class_id'])
@@ -133,7 +133,7 @@ class GradeController extends Controller
 
         $validated = $request->validated();
 
-        DB::connection('mysql')->transaction(function () use ($grade, $validated) {
+        DB::transaction(function () use ($grade, $validated) {
             $studentId = $validated['student_id'] ?? $grade->student_id;
             $subjectId = $validated['subject_id'] ?? $grade->subject_id;
             $classId = $validated['class_id'] ?? $grade->class_id;

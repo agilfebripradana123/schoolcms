@@ -4,6 +4,7 @@ namespace App\Models\Students;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 use App\Models\System\User;
@@ -46,5 +47,15 @@ class Student extends Model
     public function grades(): HasMany
     {
         return $this->hasMany(Grade::class, 'student_id');
+    }
+
+    public function parent(): HasOne
+    {
+        return $this->hasOne(StudentParent::class, 'student_id');
+    }
+
+    public function guardians(): HasMany
+    {
+        return $this->hasMany(Guardian::class, 'student_id');
     }
 }

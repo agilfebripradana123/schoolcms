@@ -22,6 +22,8 @@ class StudentResource extends JsonResource
             'address' => $this->address,
             'phone' => $this->phone,
             'photo' => $this->photo,
+            'parent' => new StudentParentResource($this->whenLoaded('parent')),
+            'guardians' => GuardianResource::collection($this->whenLoaded('guardians')),
             'created_at' => $this->created_at?->toISOString(),
             'updated_at' => $this->updated_at?->toISOString(),
         ];
