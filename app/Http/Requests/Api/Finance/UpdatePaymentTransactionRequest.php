@@ -2,9 +2,6 @@
 
 namespace App\Http\Requests\Api\Finance;
 
-use App\Models\Finance\Billing;
-use App\Models\Finance\Payment;
-use App\Models\Finance\PaymentTransaction;
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Exceptions\HttpResponseException;
@@ -44,8 +41,6 @@ class UpdatePaymentTransactionRequest extends FormRequest
                 'sometimes',
                 'required',
                 'numeric',
-                $this->signedAmountRule(),
-                $this->refundCapRule(),
             ],
             'method' => [
                 'sometimes',
@@ -64,97 +59,6 @@ class UpdatePaymentTransactionRequest extends FormRequest
                 'date',
             ],
         ];
-    }
-
-    private function signedAmountRule(): \Closure
-    {
-        return function ($attribute, $value, $fail) {
-            $type = $this->effectiveType();
-
-            if ($type === 'payment' && (float) $value <= 0) {
-                $fail('A payment transaction amount must be greater than zero.');
-            }
-
-            if ($type === 'refund' && (float) $value >= 0) {
-                $fail('A refund transaction amount must be negative.');
-            }
-
-            if ($type === 'adjustment' && (float) $value == 0) {
-                $fail('An adjustment transaction amount cannot be zero.');
-            }
-        };
-    }
-
-    private function refundCapRule(): \Closure
-    {
-        return function ($attribute, $value, $fail) {
-            if ($this->effectiveType() !== 'refund') {
-                return;
-            }
-
-            $payment = $this->paymentToValidate();
-
-            if ($payment?->billing === null) {
-                return;
-            }
-
-            $net = $this->successfulTransactionTotal(
-                $payment->billing,
-                $this->route('payment_transaction')
-            );
-            $refundable = max(0.0, (float) $net);
-
-            if (abs((float) $value) > $refundable) {
-                $fail("The refund amount exceeds the refundable amount of {$refundable}.");
-            }
-        };
-    }
-
-    private function effectiveType(): ?string
-    {
-        if ($this->filled('type')) {
-            return $this->input('type');
-        }
-
-        $currentId = $this->route('payment_transaction');
-        $current = $currentId !== null ? PaymentTransaction::find($currentId) : null;
-
-        return $current?->type;
-    }
-
-    private function paymentToValidate(): ?Payment
-    {
-        if ($this->filled('payment_id')) {
-            return Payment::with('billing')->find($this->input('payment_id'));
-        }
-
-        $currentId = $this->route('payment_transaction');
-        $current = $currentId !== null
-            ? PaymentTransaction::with('payment.billing')->find($currentId)
-            : null;
-
-        return $current?->payment;
-    }
-
-    private function successfulTransactionTotal(Billing $billing, ?int $excludeTransactionId = null): float
-    {
-        $total = 0.0;
-
-        foreach ($billing->payments as $payment) {
-            foreach ($payment->transactions as $transaction) {
-                if ($transaction->status !== 'success') {
-                    continue;
-                }
-
-                if ($excludeTransactionId !== null && (int) $transaction->id === (int) $excludeTransactionId) {
-                    continue;
-                }
-
-                $total += (float) $transaction->amount;
-            }
-        }
-
-        return $total;
     }
 
     protected function failedValidation(Validator $validator): void
