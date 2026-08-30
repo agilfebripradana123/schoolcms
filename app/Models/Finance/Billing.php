@@ -2,14 +2,18 @@
 
 namespace App\Models\Finance;
 
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
-
-use App\Models\Students\Student;
 use App\Models\Academic\AcademicYear;
 use App\Models\Academic\Semester;
+use App\Models\Students\Student;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\SoftDeletes;
+
 class Billing extends Model
 {
+    use SoftDeletes;
+
     protected $table = 'billings';
 
     protected $fillable = [
@@ -21,6 +25,8 @@ class Billing extends Model
         'due_date',
         'status',
         'notes',
+        'period_start',
+        'period_end',
     ];
 
     protected function casts(): array
@@ -32,6 +38,9 @@ class Billing extends Model
             'semester_id' => 'integer',
             'amount' => 'decimal:2',
             'due_date' => 'date:Y-m-d',
+            'period_start' => 'date:Y-m-d',
+            'period_end' => 'date:Y-m-d',
+            'deleted_at' => 'datetime',
             'created_at' => 'datetime',
             'updated_at' => 'datetime',
         ];
@@ -55,5 +64,10 @@ class Billing extends Model
     public function semester(): BelongsTo
     {
         return $this->belongsTo(Semester::class, 'semester_id');
+    }
+
+    public function payments(): HasMany
+    {
+        return $this->hasMany(Payment::class, 'billing_id');
     }
 }

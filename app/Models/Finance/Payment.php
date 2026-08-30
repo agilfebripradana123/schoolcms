@@ -2,13 +2,17 @@
 
 namespace App\Models\Finance;
 
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
-
 use App\Models\Students\Student;
 use App\Models\System\User;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\SoftDeletes;
+
 class Payment extends Model
 {
+    use SoftDeletes;
+
     protected $table = 'payments';
 
     protected $fillable = [
@@ -27,6 +31,7 @@ class Payment extends Model
         return [
             'payment_date' => 'date:Y-m-d',
             'amount' => 'decimal:2',
+            'deleted_at' => 'datetime',
             'created_at' => 'datetime',
             'updated_at' => 'datetime',
         ];
@@ -45,5 +50,10 @@ class Payment extends Model
     public function receivedBy(): BelongsTo
     {
         return $this->belongsTo(User::class, 'received_by');
+    }
+
+    public function transactions(): HasMany
+    {
+        return $this->hasMany(PaymentTransaction::class, 'payment_id');
     }
 }
