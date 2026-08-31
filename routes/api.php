@@ -443,15 +443,17 @@ Route::middleware('auth:sanctum')->group(function () {
     // PPDB REGISTRATIONS
     // =========================
     Route::middleware('throttle:60,1')->group(function () {
-        Route::get('/registrations', [RegistrationController::class, 'index']);
-        Route::get('/registrations/{registration}', [RegistrationController::class, 'show']);
+      Route::get('/registrations', [RegistrationController::class, 'index']);
+      Route::get('/registrations/export-dapodik-list', [ReRegistrationController::class, 'exportList']);
+      Route::get('/registrations/export-dapodik/download', [ReRegistrationController::class, 'exportDapodik']);
+      Route::get('/registrations/{registration:int}', [RegistrationController::class, 'show']);
     });
 
     Route::middleware(['role:Admin,Administrator', 'throttle:30,1'])->group(function () {
-        Route::post('/registrations', [RegistrationController::class, 'store']);
-        Route::put('/registrations/{registration}', [RegistrationController::class, 'update']);
-        Route::patch('/registrations/{registration}', [RegistrationController::class, 'update']);
-        Route::delete('/registrations/{registration}', [RegistrationController::class, 'destroy']);
+      Route::post('/registrations', [RegistrationController::class, 'store']);
+      Route::put('/registrations/{registration}', [RegistrationController::class, 'update']);
+      Route::patch('/registrations/{registration}', [RegistrationController::class, 'update']);
+      Route::delete('/registrations/{registration}', [RegistrationController::class, 'destroy']);
     });
 
 
@@ -459,22 +461,38 @@ Route::middleware('auth:sanctum')->group(function () {
     // PPDB WORKFLOW
     // =========================
     Route::middleware(['role:Admin,Administrator', 'throttle:30,1'])->group(function () {
-        Route::post('/registrations/{registration}/verify', [VerificationController::class, 'verify']);
-        Route::post('/registrations/{registration}/reject', [VerificationController::class, 'reject']);
-        Route::post('/registrations/{registration}/select', [SelectionController::class, 'select']);
-        Route::post('/registrations/{registration}/not-select', [SelectionController::class, 'notSelect']);
-        Route::post('/registrations/{registration}/re-register', [ReRegistrationController::class, 'reRegister']);
-        Route::post('/registrations/{registration}/verify-re-registration', [ReRegistrationController::class, 'verifyReRegistration']);
+      Route::post('/registrations/{registration}/verify', [VerificationController::class, 'verify']);
+      Route::post('/registrations/{registration}/reject', [VerificationController::class, 'reject']);
+      Route::post('/registrations/{registration}/verify-re-registration', [ReRegistrationController::class, 'verifyReRegistration']);
+    });
+
+    // Siswa menandai data dirinya sudah lengkap (untuk requirement sebelum verifikasi daftar ulang).
+    Route::middleware(['auth:sanctum', 'throttle:30,1'])->group(function () {
+      Route::post('/registrations/{registration}/complete-data', [ReRegistrationController::class, 'completeData']);
+    });
+
+    // =========================
+    // RE-REGISTRANTS (data terverifikasi dari Daftar Ulang)
+    // =========================
+    Route::middleware('role:Admin,Administrator')->group(function () {
+      Route::get('/re-registrants', [ReRegistrationController::class, 'index']);
+    });
+
+    Route::middleware(['role:Admin,Administrator', 'throttle:30,1'])->group(function () {
+      Route::post('/re-registrants/{id}/complete-data', [ReRegistrationController::class, 'completeData']);
+      Route::post('/re-registrants/{id}/verify-re-registration', [ReRegistrationController::class, 'verifyReRegistration']);
+      Route::get('/re-registrants/export-list', [ReRegistrationController::class, 'exportList']);
+      Route::get('/re-registrants/export-dapodik', [ReRegistrationController::class, 'exportDapodik']);
     });
 
     Route::middleware(['role:Admin,Administrator', 'throttle:10,1'])->group(function () {
-        Route::post('/registrations/{registration}/documents', [DocumentController::class, 'store']);
-        Route::delete('/registrations/{registration}/documents/{type}', [DocumentController::class, 'destroy']);
+      Route::post('/registrations/{registration}/documents', [DocumentController::class, 'store']);
+      Route::delete('/registrations/{registration}/documents/{type}', [DocumentController::class, 'destroy']);
     });
 
     Route::middleware('throttle:30,1')->group(function () {
-        Route::get('/registrations/{registration}/documents', [DocumentController::class, 'index']);
-        Route::get('/registrations/{registration}/documents/{type}', [DocumentController::class, 'show']);
+      Route::get('/registrations/{registration}/documents', [DocumentController::class, 'index']);
+      Route::get('/registrations/{registration}/documents/{type}', [DocumentController::class, 'show']);
     });
 
 

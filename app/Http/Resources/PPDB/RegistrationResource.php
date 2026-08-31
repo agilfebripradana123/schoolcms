@@ -25,8 +25,12 @@ class RegistrationResource extends JsonResource
             'program_choice' => $this->program_choice,
             'registration_date' => $this->registration_date?->format('Y-m-d'),
             'verification_status' => $this->verification_status,
-            'selection_status' => $this->selection_status,
+            'student_id' => $this->student_id,
+            'data_completed' => $this->data_completed ? true : false,
+            'data_completed_at' => $this->data_completed_at?->toISOString(),
             're_registration_status' => $this->re_registration_status,
+            're_registration_date' => $this->re_registration_date?->format('Y-m-d'),
+            're_registration_verified_at' => $this->re_registration_verified_at?->toISOString(),
             'created_at' => $this->created_at?->toISOString(),
             'updated_at' => $this->updated_at?->toISOString(),
         ];

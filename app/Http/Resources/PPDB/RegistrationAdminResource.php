@@ -111,19 +111,33 @@ class RegistrationAdminResource extends JsonResource
             're_registration_verified_by' => $this->re_registration_verified_by,
             're_registration_verified_at' => $this->re_registration_verified_at?->toISOString(),
 
-            // Documents (boolean only)
-            'document_kk' => $this->document_kk ? true : false,
-            'document_birth_certificate' => $this->document_birth_certificate ? true : false,
-            'document_diploma' => $this->document_diploma ? true : false,
-            'document_parent_ktp' => $this->document_parent_ktp ? true : false,
-            'document_kip_kks' => $this->document_kip_kks ? true : false,
-            'document_photo' => $this->document_photo ? true : false,
-            'document_other' => $this->document_other ? true : false,
+            // Documents (string path, empty string if not uploaded)
+            'document_kk' => $this->document_kk ?? '',
+            'document_birth_certificate' => $this->document_birth_certificate ?? '',
+            'document_diploma' => $this->document_diploma ?? '',
+            'document_parent_ktp' => $this->document_parent_ktp ?? '',
+            'document_photo' => $this->document_photo ?? '',
+            'document_kip_kks' => $this->document_kip_kks ?? '',
+            'document_other' => $this->document_other ?? '',
+
+            // Re-registration
+            're_registration_status' => $this->re_registration_status,
+            're_registration_date' => $this->re_registration_date?->format('Y-m-d'),
+            're_registration_notes' => $this->re_registration_notes,
+            're_registration_verified_by' => $this->re_registration_verified_by,
+            're_registration_verified_at' => $this->re_registration_verified_at?->toISOString(),
+
+            // Selection
+            'selection_score' => $this->selection_score,
+            'selection_status' => $this->selection_status,
+            'selection_notes' => $this->selection_notes,
+            'selected_at' => $this->selected_at?->toISOString(),
+
+            // Data completion
+            'data_completed' => $this->data_completed,
+            'data_completed_at' => $this->data_completed_at?->format('Y-m-d H:i:s'),
 
             // Additional
-            'achievements' => $this->achievements,
-            'organizations' => $this->organizations,
-            'scholarship_info' => $this->scholarship_info,
             'declaration' => $this->declaration,
 
             'created_at' => $this->created_at?->toISOString(),
