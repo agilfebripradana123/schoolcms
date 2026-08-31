@@ -2,13 +2,13 @@
 
 namespace App\Models\Students;
 
+use App\Models\Academic\Grade;
+use App\Models\Academic\SchoolClass;
+use App\Models\System\User;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-use App\Models\System\User;
-use App\Models\Academic\SchoolClass;
-use App\Models\Academic\Grade;
 class Student extends Model
 {
     use SoftDeletes;
@@ -21,10 +21,14 @@ class Student extends Model
         'nisn',
         'nis',
         'name',
+        'nik',
+        'religion',
         'gender',
         'birth_place',
         'birth_date',
         'address',
+        'previous_school',
+        'email',
         'phone',
         'photo',
     ];
