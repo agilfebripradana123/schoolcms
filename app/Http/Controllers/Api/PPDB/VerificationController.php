@@ -24,7 +24,7 @@ class VerificationController extends Controller
             ], 404);
         }
 
-        if ($registrant->status !== 'submitted' || $registrant->verification_status !== 'pending') {
+        if ($registrant->status !== 'submitted' && $registrant->status !== 'draft' || $registrant->verification_status !== 'pending') {
             throw ValidationException::withMessages([
                 'status' => ['Registration cannot be verified in its current status.'],
             ]);
@@ -33,11 +33,11 @@ class VerificationController extends Controller
         DB::connection('mysql')->transaction(function () use ($registrant, $request) {
             $registrant = Registrant::query()->lockForUpdate()->find($registrant->id);
 
-            if ($registrant->status !== 'submitted' || $registrant->verification_status !== 'pending') {
-                throw ValidationException::withMessages([
-                    'status' => ['Registration cannot be verified in its current status.'],
-                ]);
-            }
+if ($registrant->status !== 'submitted' && $registrant->status !== 'draft' || $registrant->verification_status !== 'pending') {
+            throw ValidationException::withMessages([
+                'status' => ['Registration cannot be verified in its current status.'],
+            ]);
+        }
 
             $fromStatus = $registrant->status;
 
@@ -83,7 +83,7 @@ class VerificationController extends Controller
             ], 404);
         }
 
-        if ($registrant->status !== 'submitted' || $registrant->verification_status !== 'pending') {
+        if ($registrant->status !== 'submitted' && $registrant->status !== 'draft' || $registrant->verification_status !== 'pending') {
             throw ValidationException::withMessages([
                 'status' => ['Registration cannot be rejected in its current status.'],
             ]);
