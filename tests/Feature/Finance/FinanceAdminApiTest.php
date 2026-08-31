@@ -574,6 +574,59 @@ class FinanceAdminApiTest extends TestCase
         $this->getJson('/api/billings/9999999')->assertStatus(404);
     }
 
+    public function test_admin_shows_billing_detail_relations_and_zero_totals(): void
+    {
+        $this->authenticateAsAdmin();
+        $billing = $this->createBilling($this->createTestStudent(), $this->createTestFeeType(), ['amount' => 350000]);
+
+        $response = $this->getJson("/api/billings/{$billing->id}");
+
+        $response->assertStatus(200);
+        $this->assertItemEnvelope($response);
+        $response->assertJsonPath('data.id', $billing->id);
+        $response->assertJsonPath('data.status', 'unpaid');
+        $response->assertJsonPath('data.paid', '0.00');
+        $response->assertJsonPath('data.outstanding', '350000.00');
+        $response->assertJsonCount(0, 'data.payments');
+        $response->assertJsonStructure([
+            'data' => ['student', 'fee_type', 'academic_year', 'semester', 'payments', 'paid', 'outstanding'],
+        ]);
+    }
+
+    public function test_admin_shows_billing_detail_paid_and_outstanding(): void
+    {
+        $this->authenticateAsAdmin();
+        $billing = $this->createBilling($this->createTestStudent(), $this->createTestFeeType(), ['amount' => 350000]);
+        $payment = $this->createPayment($billing, ['amount' => 150000]);
+        $this->createTransaction($payment, ['amount' => 150000, 'status' => 'success']);
+
+        $response = $this->getJson("/api/billings/{$billing->id}");
+
+        $response->assertStatus(200);
+        $response->assertJsonPath('data.paid', '150000.00');
+        $response->assertJsonPath('data.outstanding', '200000.00');
+        $response->assertJsonCount(1, 'data.payments');
+        $response->assertJsonCount(1, 'data.payments.0.transactions');
+        $response->assertJsonPath('data.payments.0.transactions.0.status', 'success');
+    }
+
+    public function test_billing_detail_pending_transaction_does_not_count_toward_paid(): void
+    {
+        $this->authenticateAsAdmin();
+        $billing = $this->createBilling($this->createTestStudent(), $this->createTestFeeType(), ['amount' => 350000]);
+        $payment = $this->createPayment($billing, ['amount' => 150000]);
+        $this->createTransaction($payment, ['amount' => 150000, 'status' => 'success']);
+        $this->createTransaction($payment, ['amount' => 50000, 'status' => 'pending']);
+
+        $response = $this->getJson("/api/billings/{$billing->id}");
+
+        $response->assertStatus(200);
+        // Only the successful transaction counts toward the ledger-paid total.
+        $response->assertJsonPath('data.paid', '150000.00');
+        $response->assertJsonPath('data.outstanding', '200000.00');
+        $response->assertJsonCount(2, 'data.payments.0.transactions');
+    }
+
     public function test_guru_and_siswa_cannot_write_billings(): void
     {
         $student = $this->createTestStudent();

@@ -52,7 +52,7 @@ class BillingController extends Controller
 
     public function show(int $id): JsonResponse
     {
-        $billing = Billing::with(['student', 'feeType', 'academicYear', 'semester'])->find($id);
+        $billing = Billing::with(['student', 'feeType', 'academicYear', 'semester', 'payments.transactions'])->find($id);
 
         if (!$billing) {
             return response()->json([
