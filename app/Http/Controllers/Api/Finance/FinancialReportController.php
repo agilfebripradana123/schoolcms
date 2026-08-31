@@ -7,11 +7,13 @@ use App\Http\Requests\Api\Finance\StoreFinancialReportRequest;
 use App\Http\Requests\Api\Finance\UpdateFinancialReportRequest;
 use App\Http\Resources\Finance\FinancialReportResource;
 use App\Models\Finance\FinancialReport;
+use App\Services\Finance\FinancialReportService;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 
 class FinancialReportController extends Controller
 {
-    public function index(\Illuminate\Http\Request $request): JsonResponse
+    public function index(Request $request): JsonResponse
     {
         $query = FinancialReport::query()->with('generator');
 
@@ -38,7 +40,7 @@ class FinancialReportController extends Controller
     {
         $report = FinancialReport::with('generator')->find($id);
 
-        if (!$report) {
+        if (! $report) {
             return response()->json([
                 'success' => false,
                 'message' => 'Financial report not found',
@@ -53,9 +55,12 @@ class FinancialReportController extends Controller
         ]);
     }
 
-    public function store(StoreFinancialReportRequest $request): JsonResponse
+    public function store(StoreFinancialReportRequest $request, FinancialReportService $reportService): JsonResponse
     {
-        $report = FinancialReport::create($request->validated());
+        $data = $request->validated();
+        $data['generated_by'] = $request->user()?->id;
+
+        $report = $reportService->generate($data);
         $report->load('generator');
 
         return response()->json([
@@ -65,11 +70,11 @@ class FinancialReportController extends Controller
         ], 201);
     }
 
-    public function update(UpdateFinancialReportRequest $request, int $id): JsonResponse
+    public function update(UpdateFinancialReportRequest $request, int $id, FinancialReportService $reportService): JsonResponse
     {
         $report = FinancialReport::find($id);
 
-        if (!$report) {
+        if (! $report) {
             return response()->json([
                 'success' => false,
                 'message' => 'Financial report not found',
@@ -77,8 +82,7 @@ class FinancialReportController extends Controller
             ], 404);
         }
 
-        $report->update($request->validated());
-        $report->load('generator');
+        $report = $reportService->regenerate($report, $request->validated());
 
         return response()->json([
             'success' => true,
@@ -91,7 +95,7 @@ class FinancialReportController extends Controller
     {
         $report = FinancialReport::find($id);
 
-        if (!$report) {
+        if (! $report) {
             return response()->json([
                 'success' => false,
                 'message' => 'Financial report not found',

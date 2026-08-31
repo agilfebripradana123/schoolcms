@@ -26,7 +26,8 @@ class StudentController extends Controller
      */
     public function show($id)
     {
-        $student = Student::find($id);
+        $student = Student::with(['user', 'schoolClass', 'parent', 'guardians'])
+            ->find($id);
 
         if (!$student) {
             return response()->json([

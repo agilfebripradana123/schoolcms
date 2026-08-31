@@ -20,7 +20,7 @@ class StorePaymentTransactionRequest extends FormRequest
             'payment_id' => [
                 'required',
                 'integer',
-                Rule::exists('payments', 'id'),
+                Rule::exists('payments', 'id')->whereNull('deleted_at'),
             ],
             'transaction_code' => [
                 'required',
@@ -36,7 +36,6 @@ class StorePaymentTransactionRequest extends FormRequest
             'amount' => [
                 'required',
                 'numeric',
-                'min:0',
             ],
             'method' => [
                 'required',

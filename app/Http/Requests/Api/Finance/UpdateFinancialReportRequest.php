@@ -38,29 +38,10 @@ class UpdateFinancialReportRequest extends FormRequest
                 'sometimes',
                 'required',
                 'date',
-                'after_or_equal:period_start',
-            ],
-            'total_billed' => [
-                'nullable',
-                'numeric',
-                'min:0',
-            ],
-            'total_paid' => [
-                'nullable',
-                'numeric',
-                'min:0',
-            ],
-            'total_outstanding' => [
-                'nullable',
-                'numeric',
-                'min:0',
-            ],
-            'generated_by' => [
-                'nullable',
-                'integer',
-                Rule::exists('users', 'id'),
+                Rule::when($this->filled('period_start'), ['after_or_equal:period_start']),
             ],
             'notes' => [
+                'sometimes',
                 'nullable',
                 'string',
             ],

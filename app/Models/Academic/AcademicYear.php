@@ -2,6 +2,7 @@
 
 namespace App\Models\Academic;
 
+use App\Models\Finance\Billing;
 use App\Models\PPDB\Registrant;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -40,5 +41,10 @@ class AcademicYear extends Model
     public function semesters(): HasMany
     {
         return $this->hasMany(Semester::class, 'academic_year_id');
+    }
+
+    public function billings(): HasMany
+    {
+        return $this->hasMany(Billing::class, 'academic_year_id');
     }
 }

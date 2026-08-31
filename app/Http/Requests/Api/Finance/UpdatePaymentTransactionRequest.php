@@ -21,7 +21,7 @@ class UpdatePaymentTransactionRequest extends FormRequest
                 'sometimes',
                 'required',
                 'integer',
-                Rule::exists('payments', 'id'),
+                Rule::exists('payments', 'id')->whereNull('deleted_at'),
             ],
             'transaction_code' => [
                 'sometimes',
@@ -41,7 +41,6 @@ class UpdatePaymentTransactionRequest extends FormRequest
                 'sometimes',
                 'required',
                 'numeric',
-                'min:0',
             ],
             'method' => [
                 'sometimes',

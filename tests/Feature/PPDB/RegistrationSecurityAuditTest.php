@@ -2,10 +2,9 @@
 
 namespace Tests\Feature\PPDB;
 
-use App\Models\Academic\AcademicYear;
 use App\Models\PPDB\Registrant;
-use App\Models\System\Role;
 use App\Models\Students\Student;
+use App\Models\System\Role;
 use App\Models\System\User;
 use Illuminate\Support\Facades\DB;
 use Laravel\Sanctum\Sanctum;
@@ -61,9 +60,18 @@ class RegistrationSecurityAuditTest extends TestCase
 
     private function authenticateAsSiswa(): User
     {
-        $siswaRole = Role::where('name', 'Siswa')->first();
-        $user = User::where('role_id', $siswaRole->id)->first();
+        // A fresh Siswa account per test so the user ↔ student link stays 1:1
+        // (students.user_id is UNIQUE since Phase 8).
+        $user = User::create([
+            'username' => 'ppdbsiswa_'.mt_rand(100000, 999999),
+            'name' => 'Siswa Test '.mt_rand(1000, 9999),
+            'email' => 'ppdbsiswa.'.mt_rand(100000, 999999).'@test.local',
+            'password' => 'password',
+            'is_active' => true,
+            'role_id' => (int) Role::where('name', 'Siswa')->value('id'),
+        ]);
         Sanctum::actingAs($user);
+
         return $user;
     }
 
@@ -73,7 +81,7 @@ class RegistrationSecurityAuditTest extends TestCase
             'user_id' => $user->id,
             'nisn' => str_pad(mt_rand(1000000000, 9999999999), 10, '0', STR_PAD_LEFT),
             'nis' => str_pad(mt_rand(100000, 999999), 6, '0', STR_PAD_LEFT),
-            'name' => 'Siswa ' . $user->name,
+            'name' => 'Siswa '.$user->name,
             'gender' => 'L',
             'birth_place' => 'Jakarta',
             'birth_date' => '2008-01-01',
@@ -84,9 +92,9 @@ class RegistrationSecurityAuditTest extends TestCase
     private function createTestRegistration(array $overrides = []): Registrant
     {
         $defaults = [
-            'registration_number' => 'SEC-PPDB-' . str_pad(mt_rand(100, 999), 3, '0', STR_PAD_LEFT),
-            'full_name' => 'Security Test ' . mt_rand(100, 999),
-            'email' => 'sec.' . mt_rand(100000, 999999) . '@test.local',
+            'registration_number' => 'SEC-PPDB-'.str_pad(mt_rand(100, 999), 3, '0', STR_PAD_LEFT),
+            'full_name' => 'Security Test '.mt_rand(100, 999),
+            'email' => 'sec.'.mt_rand(100000, 999999).'@test.local',
             'gender' => 'L',
             'status' => 'draft',
             'verification_status' => 'pending',
@@ -100,6 +108,10 @@ class RegistrationSecurityAuditTest extends TestCase
     private function cleanupTestData(): void
     {
         DB::connection('mysql')->statement('DELETE FROM registrants WHERE registration_number LIKE "SEC-PPDB-%"');
+
+        $siswaIds = DB::connection('mysql')->table('users')->where('username', 'like', 'ppdbsiswa_%')->pluck('id');
+        DB::connection('mysql')->table('students')->whereIn('user_id', $siswaIds)->delete();
+        DB::connection('mysql')->table('users')->whereIn('id', $siswaIds)->delete();
     }
 
     // ─── Authentication Tests ──────────────────────────────────
@@ -156,7 +168,7 @@ class RegistrationSecurityAuditTest extends TestCase
         $this->authenticateAsGuru();
         $response = $this->postJson('/api/registrations', [
             'full_name' => 'Guru',
-            'email' => 'guru.' . mt_rand(100000, 999999) . '@test.local',
+            'email' => 'guru.'.mt_rand(100000, 999999).'@test.local',
             'gender' => 'L',
         ]);
         $response->assertStatus(403);
@@ -204,7 +216,7 @@ class RegistrationSecurityAuditTest extends TestCase
     {
         $user = $this->authenticateAsSiswa();
         $otherStudent = Student::where('user_id', '!=', $user->id)->first();
-        if (!$otherStudent) {
+        if (! $otherStudent) {
             $this->markTestSkipped('No other student available for IDOR test');
         }
         $reg = $this->createTestRegistration(['student_id' => $otherStudent->id]);
@@ -231,7 +243,7 @@ class RegistrationSecurityAuditTest extends TestCase
         $this->authenticateAsSiswa();
         $response = $this->postJson('/api/registrations', [
             'full_name' => 'Siswa',
-            'email' => 'siswa.' . mt_rand(100000, 999999) . '@test.local',
+            'email' => 'siswa.'.mt_rand(100000, 999999).'@test.local',
             'gender' => 'L',
         ]);
         $response->assertStatus(403);
@@ -309,7 +321,7 @@ class RegistrationSecurityAuditTest extends TestCase
         $this->authenticateAsAdmin();
         $response = $this->putJson('/api/registrations/99999', [
             'full_name' => 'IDOR',
-            'email' => 'idor.' . mt_rand(100000, 999999) . '@test.local',
+            'email' => 'idor.'.mt_rand(100000, 999999).'@test.local',
             'gender' => 'L',
         ]);
         $response->assertStatus(404);
@@ -330,7 +342,7 @@ class RegistrationSecurityAuditTest extends TestCase
         $response = $this->postJson('/api/registrations', [
             'id' => 99999,
             'full_name' => 'MAI',
-            'email' => 'mai.' . mt_rand(100000, 999999) . '@test.local',
+            'email' => 'mai.'.mt_rand(100000, 999999).'@test.local',
             'gender' => 'L',
         ]);
         $response->assertStatus(201);
@@ -342,7 +354,7 @@ class RegistrationSecurityAuditTest extends TestCase
         $this->authenticateAsAdmin();
         $response = $this->postJson('/api/registrations', [
             'full_name' => 'Status MA',
-            'email' => 'stma.' . mt_rand(100000, 999999) . '@test.local',
+            'email' => 'stma.'.mt_rand(100000, 999999).'@test.local',
             'gender' => 'L',
             'status' => 'selected',
         ]);
@@ -355,7 +367,7 @@ class RegistrationSecurityAuditTest extends TestCase
         $this->authenticateAsAdmin();
         $response = $this->postJson('/api/registrations', [
             'full_name' => 'VS MA',
-            'email' => 'vsma.' . mt_rand(100000, 999999) . '@test.local',
+            'email' => 'vsma.'.mt_rand(100000, 999999).'@test.local',
             'gender' => 'L',
             'verification_status' => 'verified',
         ]);
@@ -368,7 +380,7 @@ class RegistrationSecurityAuditTest extends TestCase
         $this->authenticateAsAdmin();
         $response = $this->postJson('/api/registrations', [
             'full_name' => 'VB MA',
-            'email' => 'vbma.' . mt_rand(100000, 999999) . '@test.local',
+            'email' => 'vbma.'.mt_rand(100000, 999999).'@test.local',
             'gender' => 'L',
             'verified_by' => 99999,
         ]);

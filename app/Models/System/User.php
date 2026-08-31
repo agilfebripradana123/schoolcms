@@ -2,15 +2,17 @@
 
 namespace App\Models\System;
 
-use Illuminate\Foundation\Auth\User as Authenticatable;
+use App\Models\Students\Student;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 
 class User extends Authenticatable
 {
-    use HasApiTokens, SoftDeletes, Notifiable;
+    use HasApiTokens, Notifiable, SoftDeletes;
 
     protected $table = 'users';
 
@@ -39,5 +41,10 @@ class User extends Authenticatable
     public function role(): BelongsTo
     {
         return $this->belongsTo(Role::class, 'role_id');
+    }
+
+    public function studentProfile(): HasOne
+    {
+        return $this->hasOne(Student::class, 'user_id');
     }
 }
