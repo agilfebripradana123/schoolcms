@@ -21,6 +21,7 @@ class PaymentResource extends JsonResource
             'reference_number' => $this->reference_number,
             'received_by' => $this->received_by,
             'notes' => $this->notes,
+            'transactions' => PaymentTransactionResource::collection($this->whenLoaded('transactions')),
             'billing' => new BillingResource($this->whenLoaded('billing')),
             'student' => new StudentResource($this->whenLoaded('student')),
             'cashier' => new UserResource($this->whenLoaded('receivedBy')),
