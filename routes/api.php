@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 
 use App\Http\Controllers\Api\System\AuthController;
+use App\Http\Controllers\Api\PPDB\PublicRegistrationController;
 use App\Http\Controllers\Api\Academic\ClassController;
 use App\Http\Controllers\Api\Academic\ClassSubjectController;
 use App\Http\Controllers\Api\Academic\GradeController;
@@ -85,6 +86,9 @@ use App\Http\Controllers\Api\PPDB\SelectionController;
 use App\Http\Controllers\Api\PPDB\ReRegistrationController;
 
 Route::post('/login', [AuthController::class, 'login']);
+
+// PUBLIC PPDB REGISTRATION (CodeIgniter form submit) — no auth
+Route::post('/ppdb/register', [PublicRegistrationController::class, 'store']);
 
 Route::middleware('auth:sanctum')->group(function () {
 
