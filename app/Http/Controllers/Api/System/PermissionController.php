@@ -3,8 +3,6 @@
 namespace App\Http\Controllers\Api\System;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\Api\System\StorePermissionRequest;
-use App\Http\Requests\Api\System\UpdatePermissionRequest;
 use App\Http\Resources\System\PermissionResource;
 use App\Models\System\Permission;
 use Illuminate\Http\JsonResponse;
@@ -61,59 +59,6 @@ class PermissionController extends Controller
             'success' => true,
             'message' => 'Permission retrieved successfully',
             'data' => new PermissionResource($permission),
-        ]);
-    }
-
-    public function store(StorePermissionRequest $request): JsonResponse
-    {
-        $permission = Permission::create($request->validated());
-
-        return response()->json([
-            'success' => true,
-            'message' => 'Permission created successfully',
-            'data' => new PermissionResource($permission),
-        ], 201);
-    }
-
-    public function update(UpdatePermissionRequest $request, int $id): JsonResponse
-    {
-        $permission = Permission::find($id);
-
-        if (!$permission) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Permission not found',
-                'data' => null,
-            ], 404);
-        }
-
-        $permission->update($request->validated());
-
-        return response()->json([
-            'success' => true,
-            'message' => 'Permission updated successfully',
-            'data' => new PermissionResource($permission),
-        ]);
-    }
-
-    public function destroy(int $id): JsonResponse
-    {
-        $permission = Permission::find($id);
-
-        if (!$permission) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Permission not found',
-                'data' => null,
-            ], 404);
-        }
-
-        $permission->delete();
-
-        return response()->json([
-            'success' => true,
-            'message' => 'Permission deleted successfully',
-            'data' => null,
         ]);
     }
 }

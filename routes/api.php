@@ -287,17 +287,10 @@ Route::middleware('auth:sanctum')->group(function () {
 
 
     // =========================
-    // PERMISSIONS
+    // PERMISSIONS (read-only — system-defined catalog)
     // =========================
     Route::get('/permissions', [PermissionController::class, 'index']);
     Route::get('/permissions/{permission}', [PermissionController::class, 'show']);
-
-    Route::middleware('role:Admin,Administrator')->group(function () {
-        Route::post('/permissions', [PermissionController::class, 'store']);
-        Route::put('/permissions/{permission}', [PermissionController::class, 'update']);
-        Route::patch('/permissions/{permission}', [PermissionController::class, 'update']);
-        Route::delete('/permissions/{permission}', [PermissionController::class, 'destroy']);
-    });
 
 
     // =========================
