@@ -77,6 +77,7 @@ use App\Http\Controllers\Api\Reports\InventoryReportController;
 use App\Http\Controllers\Api\Administration\IncomingLetterController;
 use App\Http\Controllers\Api\Administration\OutgoingLetterController;
 use App\Http\Controllers\Api\Administration\DocumentController;
+use App\Http\Controllers\Api\Administration\AdministrationDocumentController;
 use App\Http\Controllers\Api\Administration\DispositionController;
 use App\Http\Controllers\Api\Facilities\InventoryController;
 use App\Http\Controllers\Api\Facilities\StockMovementController;
@@ -995,6 +996,20 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::put('/dispositions/{disposition}', [DispositionController::class, 'update']);
         Route::patch('/dispositions/{disposition}', [DispositionController::class, 'update']);
         Route::delete('/dispositions/{disposition}', [DispositionController::class, 'destroy']);
+    });
+
+
+    // =========================
+    // DOCUMENTS (dokumen administrasi)
+    // =========================
+    Route::get('/documents', [AdministrationDocumentController::class, 'index']);
+    Route::get('/documents/{document}', [AdministrationDocumentController::class, 'show']);
+
+    Route::middleware('role:Admin,Administrator')->group(function () {
+        Route::post('/documents', [AdministrationDocumentController::class, 'store']);
+        Route::put('/documents/{document}', [AdministrationDocumentController::class, 'update']);
+        Route::patch('/documents/{document}', [AdministrationDocumentController::class, 'update']);
+        Route::delete('/documents/{document}', [AdministrationDocumentController::class, 'destroy']);
     });
 
 
