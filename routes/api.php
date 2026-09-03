@@ -15,10 +15,15 @@ use App\Http\Controllers\Api\Students\AttendanceController;
 use App\Http\Controllers\Api\Academic\SubjectController;
 
 use App\Http\Controllers\Api\Students\StudentProfileController;
+use App\Http\Controllers\Api\Students\StudentAssignmentController;
 use App\Http\Controllers\Api\Students\StudentGradeController;
 use App\Http\Controllers\Api\Students\StudentScheduleController;
 use App\Http\Controllers\Api\Students\StudentAttendanceController;
 use App\Http\Controllers\Api\Students\Finance\StudentBillingController;
+use App\Http\Controllers\Api\Students\StudentAchievementController;
+use App\Http\Controllers\Api\Students\StudentExtracurricularController;
+use App\Http\Controllers\Api\Students\StudentViolationController;
+use App\Http\Controllers\Api\Students\StudentExaminationController;
 use App\Http\Controllers\Api\Students\Finance\StudentFinanceSummaryController;
 use App\Http\Controllers\Api\Students\Finance\StudentPaymentController;
 use App\Http\Controllers\Api\Students\Finance\StudentScholarshipController;
@@ -1019,10 +1024,8 @@ Route::middleware('auth:sanctum')->group(function () {
 
 
     // =========================
-    // STUDENT PORTAL — Phase 8 identity foundation only.
+    // STUDENT PORTAL — Academic, Finance, and Activity modules.
     // Authorization is forced from the authenticated, linked Student.
-    // Academic endpoints (grades, schedules, attendance) added in Phase 9.
-    // Finance endpoints are added in a later phase.
     // =========================
     Route::prefix('student')->middleware('student')->group(function () {
         Route::get('/profile', [StudentProfileController::class, 'show']);
@@ -1036,6 +1039,10 @@ Route::middleware('auth:sanctum')->group(function () {
             Route::get('/summary', [StudentAttendanceController::class, 'summary']);
         });
 
+        // Phase 9.1 — Student Assignments (read-only, identity scoped).
+        Route::get('/assignments', [StudentAssignmentController::class, 'index']);
+        Route::get('/assignments/{assignment}', [StudentAssignmentController::class, 'show']);
+
         // Phase 9 — Student Finance API (read-only, identity scoped).
         Route::prefix('finance')->group(function () {
             Route::get('/summary', [StudentFinanceSummaryController::class, 'summary']);
@@ -1048,5 +1055,23 @@ Route::middleware('auth:sanctum')->group(function () {
             Route::get('/scholarships', [StudentScholarshipController::class, 'index']);
             Route::get('/scholarships/{scholarship}', [StudentScholarshipController::class, 'show']);
         });
+
+        // Student Examination API (identity scoped).
+        Route::get('/exams', [StudentExaminationController::class, 'exams']);
+        Route::get('/exam-schedules', [StudentExaminationController::class, 'examSchedules']);
+        Route::get('/exam-sessions', [StudentExaminationController::class, 'examSessions']);
+        Route::get('/exam-instructions', [StudentExaminationController::class, 'examInstructions']);
+        Route::get('/exam-participants', [StudentExaminationController::class, 'examParticipants']);
+        Route::get('/exam-results', [StudentExaminationController::class, 'examResults']);
+        Route::get('/exam-answers', [StudentExaminationController::class, 'examAnswers']);
+
+        // Student Achievement API (identity scoped).
+        Route::get('/achievements', [StudentAchievementController::class, 'index']);
+
+        // Student Violation API (identity scoped).
+        Route::get('/violations', [StudentViolationController::class, 'index']);
+
+        // Student Extracurricular API (identity scoped).
+        Route::get('/extracurriculars', [StudentExtracurricularController::class, 'index']);
     });
 });
