@@ -8,11 +8,9 @@
 
 # PHP / Laravel
 /vendor
-/storage/*.key
 /storage/pail
 /public/build
 /public/hot
-/public/storage
 /.phpunit.cache
 .phpunit.result.cache
 

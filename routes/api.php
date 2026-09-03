@@ -109,7 +109,9 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/logout', [AuthController::class, 'logout']);
 
     // Profile (self-service, any authenticated user)
+    Route::get('/profile', [ProfileController::class, 'show']);
     Route::put('/profile', [ProfileController::class, 'update']);
+    Route::post('/profile/photo', [ProfileController::class, 'updatePhoto']);
     Route::put('/profile/password', [ProfileController::class, 'updatePassword']);
 
 
