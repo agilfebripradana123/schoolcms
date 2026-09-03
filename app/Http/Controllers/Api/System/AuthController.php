@@ -16,7 +16,7 @@ class AuthController extends Controller
             'password' => ['required', 'string'],
         ]);
 
-        $user = User::with(['role.permissions', 'permissions'])
+        $user = User::with(['role.permissions'])
             ->where('email', $validated['login'])
             ->orWhere('username', $validated['login'])
             ->first();
@@ -50,7 +50,7 @@ class AuthController extends Controller
 
     public function me(Request $request)
     {
-        $user = $request->user()->load(['role.permissions', 'permissions']);
+        $user = $request->user()->load(['role.permissions']);
 
         return response()->json([
             'user' => $this->userResponse($user),
@@ -68,14 +68,14 @@ class AuthController extends Controller
 
     /**
      * Inline user payload consistent across login/me. `permissions` is the
-     * list of effective permission names (union of the user's role permissions
-     * and the user's direct permissions).
+     * list of effective permission names (from the user's role).
+     * Direct user-permissions (pivot permission_user) is skipped if the
+     * table does not exist.
      */
     private function userResponse(User $user): array
     {
         $rolePermissions = $user->role?->permissions?->pluck('name')->all() ?? [];
-        $directPermissions = $user->permissions?->pluck('name')->all() ?? [];
-        $effective = array_values(array_unique(array_merge($rolePermissions, $directPermissions)));
+        $effective = array_values(array_unique($rolePermissions));
 
         return [
             'id' => $user->id,
