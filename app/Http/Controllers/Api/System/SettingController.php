@@ -8,19 +8,31 @@ use App\Http\Requests\Api\System\UpdateSettingRequest;
 use App\Http\Resources\System\SettingResource;
 use App\Models\System\Setting;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Crypt;
 
 class SettingController extends Controller
 {
-    public function index(\Illuminate\Http\Request $request): JsonResponse
+    public function index(Request $request): JsonResponse
     {
         $query = Setting::query();
 
         if ($request->filled('q')) {
             $search = $request->input('q');
-            $query->where('key', 'LIKE', "%{$search}%");
+            $query->where(function ($q) use ($search) {
+                $q->where('key', 'LIKE', "%{$search}%")
+                    ->orWhere('description', 'LIKE', "%{$search}%");
+            });
         }
 
-        $settings = $query->orderBy('id', 'desc')->paginate($request->input('per_page', 15));
+        if ($request->filled('group')) {
+            $query->where('group', $request->input('group'));
+        }
+
+        $settings = $query
+            ->orderBy('group')
+            ->orderBy('sort_order')
+            ->paginate($request->input('per_page', 15));
 
         return response()->json([
             'success' => true,
@@ -39,7 +51,7 @@ class SettingController extends Controller
     {
         $setting = Setting::find($id);
 
-        if (!$setting) {
+        if (! $setting) {
             return response()->json([
                 'success' => false,
                 'message' => 'Setting not found',
@@ -56,7 +68,15 @@ class SettingController extends Controller
 
     public function store(StoreSettingRequest $request): JsonResponse
     {
-        $setting = Setting::create($request->validated());
+        $data = $request->validated();
+        $shouldEncrypt = $data['is_encrypted'] || Setting::isSecretType($data['type'] ?? '');
+
+        if ($shouldEncrypt && ! empty($data['value'])) {
+            $data['value'] = Crypt::encryptString((string) $data['value']);
+            $data['is_encrypted'] = true;
+        }
+
+        $setting = Setting::create($data);
 
         return response()->json([
             'success' => true,
@@ -69,7 +89,7 @@ class SettingController extends Controller
     {
         $setting = Setting::find($id);
 
-        if (!$setting) {
+        if (! $setting) {
             return response()->json([
                 'success' => false,
                 'message' => 'Setting not found',
@@ -77,12 +97,30 @@ class SettingController extends Controller
             ], 404);
         }
 
-        $setting->update($request->validated());
+        $data = $request->validated();
+
+        $willEncrypt = ((bool) ($data['is_encrypted'] ?? $setting->is_encrypted))
+            || Setting::isSecretType($data['type'] ?? $setting->type ?? '');
+
+        // Secret handling: only change the value when a new non-empty value is
+        // supplied. An empty/absent value keeps the existing (encrypted) secret.
+        if ($willEncrypt) {
+            $data['is_encrypted'] = true;
+            if (array_key_exists('value', $data)) {
+                if ($data['value'] === null || $data['value'] === '') {
+                    unset($data['value']);
+                } else {
+                    $data['value'] = Crypt::encryptString((string) $data['value']);
+                }
+            }
+        }
+
+        $setting->update($data);
 
         return response()->json([
             'success' => true,
             'message' => 'Setting updated successfully',
-            'data' => new SettingResource($setting),
+            'data' => new SettingResource($setting->fresh()),
         ]);
     }
 
@@ -90,7 +128,7 @@ class SettingController extends Controller
     {
         $setting = Setting::find($id);
 
-        if (!$setting) {
+        if (! $setting) {
             return response()->json([
                 'success' => false,
                 'message' => 'Setting not found',
