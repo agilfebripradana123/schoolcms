@@ -20,21 +20,12 @@ class Student extends Model
     protected $table = 'students';
 
     protected $fillable = [
-        'user_id',
-        'class_id',
-        'nisn',
-        'nis',
-        'name',
-        'nik',
-        'religion',
-        'gender',
-        'birth_place',
-        'birth_date',
-        'address',
-        'previous_school',
-        'email',
-        'phone',
-        'photo',
+        'user_id','class_id','nisn','nis','name','nik','religion','gender','birth_place','birth_date',
+        'address','rt','rw','hamlet','village','district','postal_code','residence_type','transportation','telephone',
+        'family_card_number','birth_certificate_registration_number','skhun','previous_school','national_exam_number','diploma_serial_number',
+        'special_needs','birth_order','sibling_count','weight','height','head_circumference','school_distance','latitude','longitude',
+        'kps_recipient','kps_number','kip_recipient','kip_number','kip_name','kks_number','pip_eligible','pip_reason',
+        'bank_name','bank_account_number','bank_account_holder','phone','email','photo',
     ];
 
     protected $casts = [
