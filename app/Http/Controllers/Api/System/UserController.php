@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api\System;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Api\System\StoreUserRequest;
+use App\Http\Requests\Api\System\SyncUserPermissionsRequest;
 use App\Http\Requests\Api\System\UpdateUserRequest;
 use App\Http\Resources\System\UserResource;
 use App\Models\System\User;
@@ -49,7 +50,7 @@ class UserController extends Controller
 
     public function show(int $id): JsonResponse
     {
-        $user = User::with('role')->find($id);
+        $user = User::with('role', 'permissions')->find($id);
 
         if (!$user) {
             return response()->json([
@@ -104,6 +105,29 @@ class UserController extends Controller
             'success' => true,
             'message' => 'User updated successfully',
             'data' => new UserResource($user),
+        ]);
+    }
+
+    public function syncPermissions(SyncUserPermissionsRequest $request, int $id): JsonResponse
+    {
+        $user = User::find($id);
+
+        if (!$user) {
+            return response()->json([
+                'success' => false,
+                'message' => 'User not found',
+                'data' => null,
+            ], 404);
+        }
+
+        $validated = $request->validated();
+
+        $user->permissions()->sync($validated['permission_ids']);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Permissions synced successfully',
+            'data' => new UserResource($user->fresh(['role', 'permissions'])),
         ]);
     }
 

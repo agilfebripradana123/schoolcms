@@ -16,7 +16,7 @@ class AuthController extends Controller
             'password' => ['required', 'string'],
         ]);
 
-        $user = User::with('role')
+        $user = User::with(['role.permissions', 'permissions'])
             ->where('email', $validated['login'])
             ->orWhere('username', $validated['login'])
             ->first();
@@ -44,39 +44,48 @@ class AuthController extends Controller
         return response()->json([
             'message' => 'Login berhasil.',
             'token' => $token,
-            'user' => [
-                'id' => $user->id,
-                'name' => $user->name,
-                'username' => $user->username,
-                'email' => $user->email,
-                'photo' => $user->photo,
-                'is_active' => $user->is_active,
-                'role' => $user->role?->name,
-            ],
+            'user' => $this->userResponse($user),
         ]);
     }
+
     public function me(Request $request)
-        {
-            $user = $request->user()->load('role');
+    {
+        $user = $request->user()->load(['role.permissions', 'permissions']);
 
-            return response()->json([
-                'user' => [
-                    'id' => $user->id,
-                    'name' => $user->name,
-                    'username' => $user->username,
-                    'email' => $user->email,
-                    'photo' => $user->photo,
-                    'is_active' => $user->is_active,
-                    'role' => $user->role?->name,
-                ],
-            ]);
-        }
-        public function logout(Request $request)
-        {
-            $request->user()->currentAccessToken()->delete();
+        return response()->json([
+            'user' => $this->userResponse($user),
+        ]);
+    }
 
-            return response()->json([
-                'message' => 'Logout berhasil.'
-            ]);
-        }
+    public function logout(Request $request)
+    {
+        $request->user()->currentAccessToken()->delete();
+
+        return response()->json([
+            'message' => 'Logout berhasil.'
+        ]);
+    }
+
+    /**
+     * Inline user payload consistent across login/me. `permissions` is the
+     * list of effective permission names (union of the user's role permissions
+     * and the user's direct permissions).
+     */
+    private function userResponse(User $user): array
+    {
+        $rolePermissions = $user->role?->permissions?->pluck('name')->all() ?? [];
+        $directPermissions = $user->permissions?->pluck('name')->all() ?? [];
+        $effective = array_values(array_unique(array_merge($rolePermissions, $directPermissions)));
+
+        return [
+            'id' => $user->id,
+            'name' => $user->name,
+            'username' => $user->username,
+            'email' => $user->email,
+            'photo' => $user->photo,
+            'is_active' => $user->is_active,
+            'role' => $user->role?->name,
+            'permissions' => $effective,
+        ];
+    }
 }

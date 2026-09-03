@@ -69,6 +69,67 @@ class UserNotificationController extends Controller
         ]);
     }
 
+    public function unreadCount(\Illuminate\Http\Request $request): JsonResponse
+    {
+        $count = UserNotification::where('user_id', $request->user()->id)
+            ->where('is_read', 0)
+            ->count();
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Unread count retrieved successfully',
+            'data' => ['unread_count' => $count],
+        ]);
+    }
+
+    /**
+     * Mark a single notification as read. Scoped strictly to the authenticated
+     * user — a notification owned by another user returns 404.
+     */
+    public function markAsRead(\Illuminate\Http\Request $request, int $id): JsonResponse
+    {
+        $notification = UserNotification::where('user_id', $request->user()->id)
+            ->where('id', $id)
+            ->first();
+
+        if (!$notification) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Notification not found',
+                'data' => null,
+            ], 404);
+        }
+
+        if (!$notification->is_read) {
+            $notification->update([
+                'is_read' => true,
+                'read_at' => now(),
+            ]);
+        }
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Notification marked as read',
+            'data' => new UserNotificationResource($notification->fresh()),
+        ]);
+    }
+
+    public function markAllAsRead(\Illuminate\Http\Request $request): JsonResponse
+    {
+        $updated = UserNotification::where('user_id', $request->user()->id)
+            ->where('is_read', 0)
+            ->update([
+                'is_read' => true,
+                'read_at' => now(),
+            ]);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'All notifications marked as read',
+            'data' => ['updated' => $updated],
+        ]);
+    }
+
     public function show(int $id): JsonResponse
     {
         $notification = UserNotification::with('user')->find($id);
