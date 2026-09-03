@@ -18,6 +18,7 @@ class UserResource extends JsonResource
             'photo' => $this->photo,
             'is_active' => $this->is_active,
             'role' => new \App\Http\Resources\System\RoleResource($this->whenLoaded('role')),
+            'permissions' => \App\Http\Resources\System\PermissionResource::collection($this->whenLoaded('permissions')),
         ];
     }
 }

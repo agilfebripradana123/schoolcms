@@ -26,6 +26,7 @@ use App\Http\Controllers\Api\Students\Finance\StudentTransactionController;
 use App\Http\Controllers\Api\System\RoleController;
 use App\Http\Controllers\Api\System\PermissionController;
 use App\Http\Controllers\Api\System\UserController;
+use App\Http\Controllers\Api\System\ProfileController;
 
 
 use App\Http\Controllers\Api\Examination\ExamController;
@@ -101,6 +102,10 @@ Route::middleware('auth:sanctum')->group(function () {
     // =========================
     Route::get('/me', [AuthController::class, 'me']);
     Route::post('/logout', [AuthController::class, 'logout']);
+
+    // Profile (self-service, any authenticated user)
+    Route::put('/profile', [ProfileController::class, 'update']);
+    Route::put('/profile/password', [ProfileController::class, 'updatePassword']);
 
 
     // =========================
@@ -304,6 +309,7 @@ Route::middleware('auth:sanctum')->group(function () {
 
     Route::middleware('role:Admin,Administrator')->group(function () {
         Route::post('/users', [UserController::class, 'store']);
+        Route::post('/users/{user}/permissions', [UserController::class, 'syncPermissions']);
         Route::put('/users/{user}', [UserController::class, 'update']);
         Route::patch('/users/{user}', [UserController::class, 'update']);
         Route::delete('/users/{user}', [UserController::class, 'destroy']);
@@ -814,6 +820,9 @@ Route::middleware('auth:sanctum')->group(function () {
     // NOTIFICATIONS
     // =========================
     Route::get('/notifications/my', [UserNotificationController::class, 'my']);
+    Route::put('/notifications/read-all', [UserNotificationController::class, 'markAllAsRead']);
+    Route::get('/notifications/unread-count', [UserNotificationController::class, 'unreadCount']);
+    Route::put('/notifications/{notification}/read', [UserNotificationController::class, 'markAsRead']);
     Route::get('/notifications', [UserNotificationController::class, 'index']);
     Route::get('/notifications/{notification}', [UserNotificationController::class, 'show']);
 
