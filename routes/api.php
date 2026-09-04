@@ -24,6 +24,7 @@ use App\Http\Controllers\Api\Students\StudentAchievementController;
 use App\Http\Controllers\Api\Students\StudentExtracurricularController;
 use App\Http\Controllers\Api\Students\StudentViolationController;
 use App\Http\Controllers\Api\Students\StudentExaminationController;
+use App\Http\Controllers\Api\Students\StudentExamAttemptController;
 use App\Http\Controllers\Api\Students\Finance\StudentFinanceSummaryController;
 use App\Http\Controllers\Api\Students\Finance\StudentPaymentController;
 use App\Http\Controllers\Api\Students\Finance\StudentScholarshipController;
@@ -1064,6 +1065,14 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('/exam-participants', [StudentExaminationController::class, 'examParticipants']);
         Route::get('/exam-results', [StudentExaminationController::class, 'examResults']);
         Route::get('/exam-answers', [StudentExaminationController::class, 'examAnswers']);
+
+        // Phase 10 — Secure Web Exam (write, identity scoped, server-authoritative).
+        Route::post('/exam-attempts/start', [StudentExamAttemptController::class, 'start']);
+        Route::get('/exam-attempts/{exam_attempt}', [StudentExamAttemptController::class, 'show']);
+        Route::get('/exam-attempts/{exam_attempt}/questions', [StudentExamAttemptController::class, 'questions']);
+        Route::put('/exam-attempts/{exam_attempt}/answers/{question}', [StudentExamAttemptController::class, 'answer']);
+        Route::post('/exam-attempts/{exam_attempt}/submit', [StudentExamAttemptController::class, 'submit']);
+        Route::post('/exam-attempts/{exam_attempt}/events', [StudentExamAttemptController::class, 'event']);
 
         // Student Achievement API (identity scoped).
         Route::get('/achievements', [StudentAchievementController::class, 'index']);
