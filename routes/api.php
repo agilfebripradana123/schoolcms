@@ -119,7 +119,9 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/logout', [AuthController::class, 'logout']);
 
     // Profile (self-service, any authenticated user)
+    Route::get('/profile', [ProfileController::class, 'show']);
     Route::put('/profile', [ProfileController::class, 'update']);
+    Route::post('/profile/photo', [ProfileController::class, 'updatePhoto']);
     Route::put('/profile/password', [ProfileController::class, 'updatePassword']);
 
 
@@ -1039,6 +1041,8 @@ Route::middleware('auth:sanctum')->group(function () {
     // =========================
     Route::prefix('student')->middleware('student')->group(function () {
         Route::get('/profile', [StudentProfileController::class, 'show']);
+        Route::put('/profile', [StudentProfileController::class, 'update']);
+        Route::post('/profile/photo', [StudentProfileController::class, 'updatePhoto']);
 
         // Phase 9 — Student Academic API (read-only, identity scoped).
         Route::get('/grades', [StudentGradeController::class, 'index']);

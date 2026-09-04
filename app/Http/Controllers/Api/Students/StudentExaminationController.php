@@ -46,7 +46,7 @@ class StudentExaminationController extends Controller
                 'data' => [],
             ]);
         }
-        $schedules = ExamSchedule::whereIn('exam_id', $examIds)->with(['exam', 'examSession'])->get();
+        $schedules = ExamSchedule::whereIn('exam_id', $examIds)->with(['exam', 'session'])->get();
         return response()->json([
             'success' => true,
             'message' => 'Exam schedules retrieved successfully',
@@ -65,7 +65,9 @@ class StudentExaminationController extends Controller
                 'data' => [],
             ]);
         }
-        $sessions = ExamSession::whereIn('exam_id', $examIds)->with('exam')->get();
+        // ExamSession is standalone (no exam_id), return all sessions for valid exams
+        $sessionIds = ExamSchedule::whereIn('exam_id', $examIds)->pluck('session_id')->unique();
+        $sessions = ExamSession::whereIn('id', $sessionIds)->get();
         return response()->json([
             'success' => true,
             'message' => 'Exam sessions retrieved successfully',
@@ -75,16 +77,8 @@ class StudentExaminationController extends Controller
 
     public function examInstructions(Request $request): JsonResponse
     {
-        $student = $request->attributes->get('student_profile');
-        $examIds = ExamParticipant::where('student_id', $student->id)->pluck('exam_id');
-        if ($examIds->isEmpty()) {
-            return response()->json([
-                'success' => true,
-                'message' => 'Exam instructions retrieved successfully',
-                'data' => [],
-            ]);
-        }
-        $instructions = ExamInstruction::whereIn('exam_id', $examIds)->with('exam')->get();
+        // ExamInstruction is global (no exam_id), return all active
+        $instructions = ExamInstruction::where('is_active', 1)->get();
         return response()->json([
             'success' => true,
             'message' => 'Exam instructions retrieved successfully',

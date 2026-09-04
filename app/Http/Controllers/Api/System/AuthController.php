@@ -9,17 +9,49 @@ use Illuminate\Support\Facades\Hash;
 
 class AuthController extends Controller
 {
+    /**
+     * Role-aware login.
+     * Frontend sends expected_role based on login page:
+     * - siswa: only NIS (users.username) + role Siswa
+     * - guru : only email + role Guru
+     * - admin: username OR email + role Admin/Administrator
+     */
     public function login(Request $request)
     {
         $validated = $request->validate([
             'login' => ['required', 'string'],
             'password' => ['required', 'string'],
+            'expected_role' => ['nullable', 'string', 'in:siswa,guru,admin,administrator,Siswa,Guru,Admin,Administrator'],
         ]);
 
-        $user = User::with(['role.permissions', 'permissions'])
-            ->where('email', $validated['login'])
-            ->orWhere('username', $validated['login'])
-            ->first();
+        $expected = strtolower($validated['expected_role'] ?? '');
+        $login = $validated['login'];
+
+        $query = User::with(['role.permissions', 'permissions']);
+
+        if ($expected === 'siswa') {
+            // Siswa: only NIS = username
+            $query->where('username', $login);
+        } elseif ($expected === 'guru') {
+            // Guru: only email
+            $query->where('email', $login);
+        } elseif (in_array($expected, ['admin', 'administrator'], true)) {
+            // Admin/Administrator: username OR email
+            // Actual role is checked below.
+            $query->where(function ($q) use ($login) {
+                $q->where('email', $login)
+                    ->orWhere('username', $login);
+            });
+        } else {
+            // Fallback without expected_role:
+            // preserve previous username/email login behavior.
+            $query->where(function ($q) use ($login) {
+                $q->where('email', $login)
+                    ->orWhere('username', $login);
+            });
+        }
+
+        $user = $query->first();
 
         if (!$user) {
             return response()->json([
@@ -37,6 +69,19 @@ class AuthController extends Controller
             return response()->json([
                 'message' => 'Akun Anda tidak aktif.'
             ], 403);
+        }
+
+        // Role gate: expected_role must match user's actual role
+        if ($expected !== '') {
+            $actual = strtolower($user->role?->name ?? '');
+            $isAdminExpected = in_array($expected, ['admin', 'administrator'], true);
+            $isAdminActual = in_array($actual, ['admin', 'administrator'], true);
+            $matches = ($actual === $expected) || ($isAdminExpected && $isAdminActual);
+            if (!$matches) {
+                return response()->json([
+                    'message' => 'Akun tidak memiliki akses untuk halaman login ini.'
+                ], 403);
+            }
         }
 
         $token = $user->createToken('schoolcms')->plainTextToken;
@@ -86,7 +131,7 @@ class AuthController extends Controller
             'name' => $user->name,
             'username' => $user->username,
             'email' => $user->email,
-            'photo' => $user->photo,
+            'photo' => $user->photo ? \Illuminate\Support\Facades\Storage::disk('public')->url($user->photo) : null,
             'is_active' => $user->is_active,
             'role' => $user->role?->name,
             'permissions' => $effective,
