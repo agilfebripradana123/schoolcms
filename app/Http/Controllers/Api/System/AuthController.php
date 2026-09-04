@@ -27,7 +27,7 @@ class AuthController extends Controller
         $expected = strtolower($validated['expected_role'] ?? '');
         $login = $validated['login'];
 
-        $query = User::with(['role.permissions']);
+        $query = User::with(['role.permissions', 'permissions']);
 
         if ($expected === 'siswa') {
             // Siswa: only NIS = username
@@ -36,14 +36,18 @@ class AuthController extends Controller
             // Guru: only email
             $query->where('email', $login);
         } elseif (in_array($expected, ['admin', 'administrator'], true)) {
-            // Admin: username OR email, but role will be checked below
+            // Admin/Administrator: username OR email
+            // Actual role is checked below.
             $query->where(function ($q) use ($login) {
-                $q->where('email', $login)->orWhere('username', $login);
+                $q->where('email', $login)
+                    ->orWhere('username', $login);
             });
         } else {
-            // Fallback (no expected_role) — keep old behavior for backwards compat
+            // Fallback without expected_role:
+            // preserve previous username/email login behavior.
             $query->where(function ($q) use ($login) {
-                $q->where('email', $login)->orWhere('username', $login);
+                $q->where('email', $login)
+                    ->orWhere('username', $login);
             });
         }
 
@@ -91,7 +95,7 @@ class AuthController extends Controller
 
     public function me(Request $request)
     {
-        $user = $request->user()->load(['role.permissions']);
+        $user = $request->user()->load(['role.permissions', 'permissions']);
 
         return response()->json([
             'user' => $this->userResponse($user),
@@ -109,14 +113,18 @@ class AuthController extends Controller
 
     /**
      * Inline user payload consistent across login/me. `permissions` is the
-     * list of effective permission names (from the user's role).
-     * Direct user-permissions (pivot permission_user) is skipped if the
-     * table does not exist.
+     * list of EFFECTIVE permission names:
+     *
+     *   role permissions (permission_role) UNION user additional permissions (permission_user)
+     *
+     * Matches how ProfileController::userResponse() builds the same payload so
+     * the frontend always receives the full effective permission set.
      */
     private function userResponse(User $user): array
     {
         $rolePermissions = $user->role?->permissions?->pluck('name')->all() ?? [];
-        $effective = array_values(array_unique($rolePermissions));
+        $userPermissions = $user->permissions?->pluck('name')->all() ?? [];
+        $effective = array_values(array_unique(array_merge($rolePermissions, $userPermissions)));
 
         return [
             'id' => $user->id,
