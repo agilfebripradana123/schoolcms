@@ -25,6 +25,15 @@ use App\Http\Controllers\Api\Students\StudentExtracurricularController;
 use App\Http\Controllers\Api\Students\StudentViolationController;
 use App\Http\Controllers\Api\Students\StudentExaminationController;
 use App\Http\Controllers\Api\Students\StudentExamAttemptController;
+use App\Http\Controllers\Api\Teachers\TeacherClassController;
+use App\Http\Controllers\Api\Teachers\TeacherScheduleController;
+use App\Http\Controllers\Api\Teachers\TeacherAttendanceController as TeacherStudentAttendanceController;
+use App\Http\Controllers\Api\Teachers\TeacherGradeController;
+use App\Http\Controllers\Api\Teachers\TeacherAssignmentController as TeacherAssignmentSelfController;
+use App\Http\Controllers\Api\Teachers\TeacherExamController;
+use App\Http\Controllers\Api\Teachers\TeacherExamScheduleController;
+use App\Http\Controllers\Api\Teachers\TeacherExamResultController;
+use App\Http\Controllers\Api\Teachers\TeacherExamMonitoringController;
 use App\Http\Controllers\Api\Students\Finance\StudentFinanceSummaryController;
 use App\Http\Controllers\Api\Students\Finance\StudentPaymentController;
 use App\Http\Controllers\Api\Students\Finance\StudentScholarshipController;
@@ -1082,5 +1091,55 @@ Route::middleware('auth:sanctum')->group(function () {
 
         // Student Extracurricular API (identity scoped).
         Route::get('/extracurriculars', [StudentExtracurricularController::class, 'index']);
+    });
+
+    // =========================
+    // TEACHER SELF-SERVICE — Kelas & Siswa (Phase 4).
+    // Data scope resolved server-side from the authenticated user ->
+    // linked Teacher -> teacher_assignments (client teacher_id is never trusted).
+    // =========================
+    Route::prefix('teacher')->middleware('auth:sanctum')->group(function () {
+        Route::get('/classes', [TeacherClassController::class, 'myClasses'])
+            ->middleware('permission:view-classes');
+        Route::get('/classes/{class}/students', [TeacherClassController::class, 'myClassStudents'])
+            ->middleware('permission:view-students');
+        Route::get('/schedules', [TeacherScheduleController::class, 'mySchedules'])
+            ->middleware('permission:view-schedules');
+        Route::get('/attendance', [TeacherStudentAttendanceController::class, 'roster'])
+            ->middleware('permission:view-attendance');
+        Route::post('/attendance', [TeacherStudentAttendanceController::class, 'store'])
+            ->middleware('permission:manage-attendance');
+        Route::get('/assignments', [TeacherAssignmentSelfController::class, 'index'])
+            ->middleware('permission:view-assignments');
+        Route::post('/assignments', [TeacherAssignmentSelfController::class, 'store'])
+            ->middleware('permission:manage-assignments');
+        Route::get('/assignments/{assignment}', [TeacherAssignmentSelfController::class, 'show'])
+            ->middleware('permission:view-assignments');
+        Route::put('/assignments/{assignment}', [TeacherAssignmentSelfController::class, 'update'])
+            ->middleware('permission:manage-assignments');
+        Route::patch('/assignments/{assignment}', [TeacherAssignmentSelfController::class, 'update'])
+            ->middleware('permission:manage-assignments');
+        Route::delete('/assignments/{assignment}', [TeacherAssignmentSelfController::class, 'destroy'])
+            ->middleware('permission:manage-assignments');
+        Route::get('/grades', [TeacherGradeController::class, 'roster'])
+            ->middleware('permission:view-grades');
+        Route::post('/grades/bulk', [TeacherGradeController::class, 'bulkStore'])
+            ->middleware('permission:manage-grades');
+        Route::get('/exams', [TeacherExamController::class, 'index'])
+            ->middleware('permission:view-exams');
+        Route::get('/exams/{exam}', [TeacherExamController::class, 'show'])
+            ->middleware('permission:view-exams');
+        Route::get('/exam-schedules', [TeacherExamScheduleController::class, 'index'])
+            ->middleware('permission:view-exam-schedules');
+        Route::get('/exam-schedules/{exam_schedule}', [TeacherExamScheduleController::class, 'show'])
+            ->middleware('permission:view-exam-schedules');
+        Route::get('/exam-results', [TeacherExamResultController::class, 'index'])
+            ->middleware('permission:view-exam-results');
+        Route::get('/exam-results/{exam_result}', [TeacherExamResultController::class, 'show'])
+            ->middleware('permission:view-exam-results');
+        Route::get('/exam-monitoring', [TeacherExamMonitoringController::class, 'index'])
+            ->middleware('permission:view-exam-monitoring');
+        Route::get('/exam-monitoring/{attempt}', [TeacherExamMonitoringController::class, 'show'])
+            ->middleware('permission:view-exam-monitoring');
     });
 });
